@@ -34,14 +34,14 @@ function makeCode() {
   const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
   for (;;) { let c = ''; for (let i = 0; i < 4; i++) c += A[E.rnd(A.length)]; if (!rooms.has(c)) return c; }
 }
-const cleanNick = v => String(v || '').replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁯﻿]/g, '').trim().slice(0, 16) || 'Oyuncu';
+const cleanNick = v => String(v || '').replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁯﻿]/g, '').trim().slice(0, 16);
 const cleanPid = v => (typeof v === 'string' && /^[a-z0-9]{6,40}$/i.test(v) ? v : null);
 
 function send(ws, msg) { if (ws.readyState === 1) ws.send(JSON.stringify(msg)); }
 function presentPids(room) { const s = new Set(); room.clients.forEach(ws => s.add(ws.pid)); return s; }
 function broadcast(room) {
   room.st.seq++;
-  const msg = JSON.stringify({ t: 'state', st: { ...room.st, hostPid: room.hostPid, code: room.code } });
+  const msg = JSON.stringify({ t: 'state', now: Date.now(), st: { ...room.st, hostPid: room.hostPid, code: room.code } });
   room.clients.forEach(ws => { if (ws.readyState === 1) ws.send(msg); });
 }
 function seatOf(room, pid) { return E.COLORS.find(c => room.st.seats[c] && !room.st.seats[c].bot && room.st.seats[c].pid === pid); }
@@ -67,15 +67,23 @@ function scheduleBot(room) {
   clearTimeout(room.botT);
   const st = room.st; if (st.phase !== 'play') return;
   const se = st.seats[st.turn]; if (!se) return;
-  let wait = 0;
-  if (!se.bot) { if (!se.off) return; wait = Math.max(0, OFFLINE_BOT_MS - (Date.now() - (room.offSince[se.pid] || Date.now()))); }
+  const botDelay = st.dice == null ? 1100 : 900, now = Date.now();
+  let wait = botDelay, human = !se.bot;
+  if (human) {
+    // süre dolunca ya da (bağlantısı koptuysa) 15 sn sonra hamle otomatik yapılır
+    const byClock = (st.turnEnds || now) - now;
+    const byOffline = se.off ? Math.max(0, OFFLINE_BOT_MS - (now - (room.offSince[se.pid] || now))) + botDelay : Infinity;
+    wait = Math.max(0, Math.min(byClock, byOffline));
+  }
+  const key = st.stepKey;
   room.botT = setTimeout(() => {
-    const cur = room.st.seats[room.st.turn];
-    if (room.st.phase !== 'play' || !cur || (!cur.bot && !cur.off)) return;
-    E.botStep(room.st); broadcast(room); scheduleBot(room);
-  }, wait + (st.dice == null ? 1100 : 900));
+    const s = room.st, cur = s.seats[s.turn];
+    if (s.phase !== 'play' || !cur || s.stepKey !== key) return;
+    if (human && !cur.bot && !cur.off) E.timeoutStep(s); else E.botStep(s);
+    changed(room);
+  }, wait);
 }
-function changed(room) { broadcast(room); scheduleBot(room); }
+function changed(room) { E.armTimer(room.st, Date.now()); broadcast(room); scheduleBot(room); }
 
 function joinRoom(ws, room, nick) {
   if (ws.room && ws.room !== room) leave(ws);
@@ -100,18 +108,18 @@ function leave(ws) {
 function handle(ws, m) {
   if (!m || typeof m !== 'object') return;
   if (m.t === 'hello') { ws.pid = cleanPid(m.pid); return; }
-  if (!ws.pid) return send(ws, { t: 'error', msg: 'Bağlantı kurulamadı, sayfayı yenile.' });
+  if (!ws.pid) return send(ws, { t: 'error', code: 'conn' });
 
   if (m.t === 'create') {
     const room = { code: makeCode(), st: E.newState(), hostPid: ws.pid, clients: new Set(), offSince: {}, botT: null, emptySince: 0 };
-    room.st.msg = 'Oda kuruldu.';
+    room.st.msg = null;
     rooms.set(room.code, room);
     return joinRoom(ws, room, cleanNick(m.nick));
   }
   if (m.t === 'join') {
     const code = String(m.code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
     const room = rooms.get(code);
-    if (!room) return send(ws, { t: 'error', msg: 'Bu kodla bir oda bulunamadı. Kodu kontrol et ya da yeni oda kur.', code: 'no_room' });
+    if (!room) return send(ws, { t: 'error', code: 'no_room' });
     return joinRoom(ws, room, cleanNick(m.nick));
   }
   if (m.t === 'leave') { leave(ws); return; }
@@ -122,7 +130,7 @@ function handle(ws, m) {
   if (m.t === 'act') { if (E.applyAct(st, m.a, ws.pid)) changed(room); return; }
   if (!isHost) return;
   if (m.t === 'addbot' && E.COLORS.includes(m.c) && !st.seats[m.c] && st.phase === 'lobby') {
-    st.seats[m.c] = { pid: 'bot-' + m.c, nick: 'Bot ' + E.NAME[m.c], bot: true }; return changed(room);
+    st.seats[m.c] = { pid: 'bot-' + m.c, nick: '', bot: true }; return changed(room);
   }
   if (m.t === 'rmbot' && E.COLORS.includes(m.c) && st.seats[m.c] && st.seats[m.c].bot && st.phase === 'lobby') {
     st.seats[m.c] = null; return changed(room);
@@ -130,10 +138,10 @@ function handle(ws, m) {
   if (m.t === 'start' && st.phase === 'lobby' && E.COLORS.filter(c => st.seats[c]).length >= 2) { E.startGame(st); return changed(room); }
   if (m.t === 'again' && st.phase === 'over') {
     E.COLORS.forEach(c => { if (st.seats[c] && st.seats[c].off) st.seats[c] = null; });
-    if (E.COLORS.filter(c => st.seats[c]).length >= 2) E.startGame(st); else { st.phase = 'lobby'; st.msg = ''; }
+    if (E.COLORS.filter(c => st.seats[c]).length >= 2) E.startGame(st); else { st.phase = 'lobby'; st.msg = null; }
     return changed(room);
   }
-  if (m.t === 'tolobby' && st.phase !== 'lobby') { st.phase = 'lobby'; st.msg = ''; refresh(room); return changed(room); }
+  if (m.t === 'tolobby' && st.phase !== 'lobby') { st.phase = 'lobby'; st.msg = null; refresh(room); return changed(room); }
 }
 
 const wss = new WebSocketServer({ server, maxPayload: 4096 });

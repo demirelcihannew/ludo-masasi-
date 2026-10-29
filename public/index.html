@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2a1c13">
 <meta property="og:title" content="Ludo Masası">
-<meta property="og:description" content="Arkadaşlarınla online Ludo oyna. Linke tıkla, adını yaz, oyuna katıl.">
+<meta property="og:description" content="Arkadaşlarınla online Ludo oyna. Play Ludo online with friends.">
 <title>Ludo Masası</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23fff'/%3E%3Ccircle cx='9' cy='9' r='3.2' fill='%232a1c13'/%3E%3Ccircle cx='23' cy='23' r='3.2' fill='%232a1c13'/%3E%3Ccircle cx='16' cy='16' r='3.2' fill='%23e0453a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -123,6 +123,16 @@ input[type=text]{background:var(--table);border:2px solid var(--plaque-hi);color
 .ranks{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
 .ranks li{display:flex;align-items:center;gap:10px;background:var(--table);border-radius:10px;padding:10px 12px;font-weight:800}
 .ranks .pos{font-family:var(--display);font-size:22px;width:28px;color:var(--accent)}
+.sndbtn{display:inline-grid;place-items:center;padding:6px 9px}
+.sndbtn .x{display:none}.sndbtn[aria-pressed=false] .x{display:inline}.sndbtn[aria-pressed=false] .w{display:none}
+.tm{display:flex;align-items:center;gap:6px;width:100%}
+.pl.right .tm{flex-direction:row-reverse}
+.tm .bar{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.tm .bar i{display:block;height:100%;width:100%;background:var(--c);transition:width .25s linear}
+.tm .secs{font-size:12px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums;min-width:2.6em}
+.pl.right .tm .secs{text-align:left}
+.tm.warn .bar i{background:var(--danger)}.tm.warn .secs{color:var(--danger)}
+.langrow{display:flex;justify-content:flex-end}
 .netbar{position:fixed;top:0;left:0;right:0;padding:8px max(16px,env(safe-area-inset-left,0px));padding-top:calc(8px + env(safe-area-inset-top,0px));background:#7a2e22;color:#fff;font-weight:800;text-align:center;z-index:40}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--table);padding:10px 16px;border-radius:10px;font-weight:800;z-index:30;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -133,83 +143,84 @@ input[type=text]{background:var(--table);border:2px solid var(--plaque-hi);color
 
 <!-- ================= MENU ================= -->
 <section id="menu" class="screen" style="display:flex;flex-direction:column;gap:16px">
+  <div class="langrow" style="gap:8px"><button class="mini sndbtn" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini langbtn" type="button">EN</button></div>
   <div class="brand">
     <div class="word" aria-label="Ludo">
       <span style="background:var(--red);--r:-6deg">L</span><span style="background:var(--green);--r:4deg">U</span><span style="background:var(--yellow);--r:-3deg;color:#3a2300">D</span><span style="background:var(--blue);--r:7deg">O</span>
     </div>
-    <small>Masası</small>
+    <small data-i18n="brandSub">Masası</small>
   </div>
 
   <div class="card">
-    <label class="fld" for="nick">Oyuncu adın
-      <input type="text" id="nick" maxlength="16" placeholder="Örn. Can" autocomplete="nickname">
+    <label class="fld" for="nick"><span data-i18n="yourName">Oyuncu adın</span>
+      <input type="text" id="nick" maxlength="16" placeholder="Örn. Can" data-i18n-ph="namePh" autocomplete="nickname">
     </label>
   </div>
 
   <div id="joinHint" class="card" hidden style="border-color:var(--accent)">
-    <h2>Davet aldın</h2>
-    <p>Oda <b id="hintCode"></b> seni bekliyor. Adını yaz ve katıl.</p>
-    <button class="btn go big" id="hintJoin">Odaya katıl</button>
+    <h2 data-i18n="invited">Davet aldın</h2>
+    <p><span data-i18n="hintA">Oda</span> <b id="hintCode"></b> <span data-i18n="hintB">seni bekliyor. Adını yaz ve katıl.</span></p>
+    <button class="btn go big" id="hintJoin" data-i18n="joinRoom">Odaya katıl</button>
   </div>
 
   <div class="modes">
     <div class="card">
-      <h2>Online oda kur</h2>
-      <p>Bir oda aç, davet linkini arkadaşlarına gönder. Boş yerlere bot da koyabilirsin.</p>
-      <button class="btn go big" id="hostBtn">Oda kur</button>
+      <h2 data-i18n="hostTitle">Online oda kur</h2>
+      <p data-i18n="hostDesc">Bir oda aç, davet linkini arkadaşlarına gönder. Boş yerlere bot da koyabilirsin.</p>
+      <button class="btn go big" id="hostBtn" data-i18n="hostBtn">Oda kur</button>
     </div>
     <div class="card">
-      <h2>Koda katıl</h2>
-      <p>Arkadaşının gönderdiği oda kodunu yaz.</p>
+      <h2 data-i18n="joinTitle">Koda katıl</h2>
+      <p data-i18n="joinDesc">Arkadaşının gönderdiği oda kodunu yaz.</p>
       <div class="row">
         <input type="text" id="codeIn" maxlength="6" placeholder="ABCD" style="flex:1;min-width:110px;text-transform:uppercase;letter-spacing:.15em" autocomplete="off">
-        <button class="btn" id="joinBtn">Katıl</button>
+        <button class="btn" id="joinBtn" data-i18n="joinBtn">Katıl</button>
       </div>
     </div>
   </div>
 
   <div class="modes">
     <div class="card">
-      <h2>Bilgisayara karşı</h2>
-      <div class="row"><span class="note">Oyuncu sayısı</span>
+      <h2 data-i18n="vsBot">Bilgisayara karşı</h2>
+      <div class="row"><span class="note" data-i18n="players">Oyuncu sayısı</span>
         <div class="seg" id="botN"><button data-n="2" aria-pressed="true">2</button><button data-n="3" aria-pressed="false">3</button><button data-n="4" aria-pressed="false">4</button></div>
       </div>
-      <button class="btn big" id="botBtn">Başla</button>
+      <button class="btn big" id="botBtn" data-i18n="startBtn">Başla</button>
     </div>
     <div class="card">
-      <h2>Aynı cihazda</h2>
-      <div class="row"><span class="note">Oyuncu sayısı</span>
+      <h2 data-i18n="sameDev">Aynı cihazda</h2>
+      <div class="row"><span class="note" data-i18n="players">Oyuncu sayısı</span>
         <div class="seg" id="hotN"><button data-n="2" aria-pressed="true">2</button><button data-n="3" aria-pressed="false">3</button><button data-n="4" aria-pressed="false">4</button></div>
       </div>
-      <button class="btn big" id="hotBtn">Başla</button>
+      <button class="btn big" id="hotBtn" data-i18n="startBtn">Başla</button>
     </div>
   </div>
-  <p class="note">Kurallar: Taşı çıkarmak için 6 at. 6 atınca tekrar atarsın, üst üste üç 6 sırayı yakar. Rakibin üstüne gelirsen onu evine yollar ve bir zar daha atarsın. Yıldızlı ve renkli başlangıç kareleri güvenlidir. Dört taşını da merkeze ilk sokan kazanır.</p>
+  <p class="note" data-i18n="rules">Kurallar: Taşı çıkarmak için 6 at. 6 atınca tekrar atarsın, üst üste üç 6 sırayı yakar. Rakibin üstüne gelirsen onu evine yollar ve bir zar daha atarsın. Yıldızlı ve renkli başlangıç kareleri güvenlidir. Dört taşını da merkeze ilk sokan kazanır.</p>
 </section>
 
 <!-- ================= LOBBY ================= -->
 <section id="lobby" class="screen" hidden style="display:flex;flex-direction:column;gap:16px">
-  <div class="topbar"><button class="mini" id="lobbyBack">← Ana menü</button><span class="roomtag" id="lobbyRole"></span></div>
+  <div class="topbar"><button class="mini" id="lobbyBack" data-i18n="back">← Ana menü</button><span class="row" style="gap:8px"><span class="roomtag" id="lobbyRole"></span><button class="mini sndbtn" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini langbtn" type="button">EN</button></span></div>
   <div class="card" style="align-items:center;text-align:center">
-    <p>Oda kodu</p>
+    <p data-i18n="roomCode">Oda kodu</p>
     <div class="code" id="lobbyCode">····</div>
     <div class="row" style="justify-content:center">
-      <button class="btn go" id="copyInvite">Davet linkini kopyala</button>
-      <a class="btn" id="waShare" target="_blank" rel="noopener" style="text-decoration:none;background:#25a35a;color:#fff">WhatsApp'ta paylaş</a>
+      <button class="btn go" id="copyInvite" data-i18n="copyInvite">Davet linkini kopyala</button>
+      <a class="btn" id="waShare" target="_blank" rel="noopener" style="text-decoration:none;background:#25a35a;color:#fff" data-i18n="waShare">WhatsApp'ta paylaş</a>
     </div>
     <p class="note" id="inviteLink" style="word-break:break-all"></p>
   </div>
   <div class="card">
-    <h2>Oyuncular</h2>
+    <h2 data-i18n="playersTitle">Oyuncular</h2>
     <div class="seats" id="seatList"></div>
     <p class="note" id="lobbyMsg"></p>
-    <button class="btn go big" id="startBtn" hidden>Oyunu başlat</button>
+    <button class="btn go big" id="startBtn" hidden data-i18n="startGame">Oyunu başlat</button>
   </div>
 </section>
 
 <!-- ================= GAME ================= -->
 <section id="game" class="screen game" hidden>
-  <div class="topbar" style="max-width:600px"><button class="mini" id="gameBack">← Ana menü</button><span class="roomtag" id="gameRoom"></span></div>
+  <div class="topbar" style="max-width:600px"><button class="mini" id="gameBack" data-i18n="back">← Ana menü</button><span class="row" style="gap:8px"><span class="roomtag" id="gameRoom"></span><button class="mini sndbtn" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini langbtn" type="button">EN</button></span></div>
   <div class="prow"><div class="pl" data-c="red"></div><div class="pl right" data-c="green"></div></div>
   <div class="board" id="board"></div>
   <div class="prow"><div class="pl" data-c="blue"></div><div class="pl right" data-c="yellow"></div></div>
@@ -219,18 +230,18 @@ input[type=text]{background:var(--table);border:2px solid var(--plaque-hi);color
 
 <div class="overlay" id="over" hidden>
   <div class="card">
-    <h2>Oyun bitti</h2>
+    <h2 data-i18n="gameOver">Oyun bitti</h2>
     <ol class="ranks" id="rankList"></ol>
-    <div class="row"><button class="btn go" id="againBtn">Tekrar oyna</button><button class="btn" id="overMenu">Ana menü</button></div>
-    <p class="note" id="overNote" hidden>Yeni oyunu oda kurucusu başlatır.</p>
+    <div class="row"><button class="btn go" id="againBtn" data-i18n="again">Tekrar oyna</button><button class="btn" id="overMenu" data-i18n="menu">Ana menü</button></div>
+    <p class="note" id="overNote" hidden data-i18n="hostRestarts">Yeni oyunu oda kurucusu başlatır.</p>
   </div>
 </div>
-<div class="netbar" id="netbar" hidden>Bağlantı koptu, yeniden bağlanılıyor…</div>
+<div class="netbar" id="netbar" hidden data-i18n="reconnecting">Bağlantı koptu, yeniden bağlanılıyor…</div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="engine.js"></script>
 <script>
-const {COLORS,SEAT_ORDER,NAME,TRACK,OFF,HOME,SAFE,rnd,nk,gIdx,newState,startGame,legal,applyAct,botStep}=window.LudoEngine;
+const {armTimer,timeoutStep,TURN_MS,COLORS,SEAT_ORDER,NAME,TRACK,OFF,HOME,SAFE,rnd,nk,gIdx,newState,startGame,legal,applyAct,botStep}=window.LudoEngine;
 const QUAD={red:[0,0],green:[9,0],yellow:[9,9],blue:[0,9]};
 const FIN={red:[6.55,7.5],green:[7.5,6.55],yellow:[8.45,7.5],blue:[7.5,8.45]};
 const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
@@ -241,6 +252,89 @@ const cleanNick=v=>String(v||'').replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-
 function store(k,v){try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null}}
 function getPid(){let p=null;try{p=sessionStorage.getItem('ludo-pid')}catch(e){} if(!p){p='p'+Date.now().toString(36)+rnd(1e9).toString(36);try{sessionStorage.setItem('ludo-pid',p)}catch(e){}} return p}
 const PID=getPid();
+
+
+/* ================= dil ================= */
+const I18N={
+ tr:{brandSub:'Masası',yourName:'Oyuncu adın',namePh:'Örn. Can',invited:'Davet aldın',hintA:'Oda',hintB:'seni bekliyor. Adını yaz ve katıl.',joinRoom:'Odaya katıl',
+  hostTitle:'Online oda kur',hostDesc:'Bir oda aç, davet linkini arkadaşlarına gönder. Boş yerlere bot da koyabilirsin.',hostBtn:'Oda kur',
+  joinTitle:'Koda katıl',joinDesc:'Arkadaşının gönderdiği oda kodunu yaz.',joinBtn:'Katıl',vsBot:'Bilgisayara karşı',sameDev:'Aynı cihazda',players:'Oyuncu sayısı',startBtn:'Başla',
+  rules:'Kurallar: Taşı çıkarmak için 6 at. 6 atınca tekrar atarsın, üst üste üç 6 sırayı yakar. Rakibin üstüne gelirsen onu evine yollar ve bir zar daha atarsın. Yıldızlı ve renkli başlangıç kareleri güvenlidir. Dört taşını da merkeze ilk sokan kazanır. Her hamle için 20 saniyen var; süre dolarsa hamle otomatik yapılır.',
+  back:'← Ana menü',roomCode:'Oda kodu',copyInvite:'Davet linkini kopyala',waShare:"WhatsApp'ta paylaş",playersTitle:'Oyuncular',startGame:'Oyunu başlat',
+  gameOver:'Oyun bitti',again:'Tekrar oyna',menu:'Ana menü',hostRestarts:'Yeni oyunu oda kurucusu başlatır.',reconnecting:'Bağlantı koptu, yeniden bağlanılıyor…',timeout:n=>`${n} için süre doldu, hamle otomatik yapıldı.`,secs:n=>`${n} sn`,mute:'Sesi kapat',unmute:'Sesi aç',
+  col:{red:'Kırmızı',green:'Yeşil',yellow:'Sarı',blue:'Mavi'},bot:'Bot',you:'Sen',offline:'Çevrimdışı',place:n=>`${n}. oldu`,inHome:n=>`${n}/4 içeride`,
+  piece:(c,i)=>`${c} taş ${i}`,rollDie:'Zar at',die:'Zar',
+  yourRoll:'Sıra sende, zarı at.',pickPiece:'Oynatacağın taşa dokun.',turnOf:n=>`Sıra: ${n}`,room:c=>`Oda ${c}`,
+  isHost:'Oda kurucusu sensin',joined:'Odaya katıldın',empty:'Boş yer',addBot:'Bot ekle',remove:'Çıkar',
+  connecting:'Odaya bağlanılıyor…',need2:'Başlamak için en az 2 oyuncu gerekli. Arkadaşını bekle ya da bot ekle.',ready:n=>`${n} oyuncu hazır.`,
+  waitHost:'Oda kurucusunun oyunu başlatması bekleniyor.',full:'Oda dolu. Oyun başlayınca izleyici olarak bakabilirsin.',
+  nameFirst:'Önce adını yaz.',code4:'Oda kodu 4 karakter olmalı.',inviteText:l=>`Ludo oynayalım! Odaya gel: ${l}`,copied:'Davet linki kopyalandı.',
+  err:{no_room:'Bu kodla bir oda bulunamadı. Kodu kontrol et ya da yeni oda kur.',conn:'Bağlantı kurulamadı, sayfayı yenile.'},
+  m:{start:v=>`Oyun başladı. İlk sıra ${v.n}.`,three6:v=>`${v.n} üst üste üç 6 attı, sıra geçti.`,nomove:v=>`${v.n} ${v.d} attı, oynayacak taş yok.`,
+     rolled:v=>`${v.n} ${v.d} attı.`,cap:v=>`${v.n} rakip taşı evine yolladı! Bir zar daha.`,fin:v=>`${v.n} bir taşını merkeze soktu!`,
+     done:v=>`${v.n} bütün taşlarını soktu! ${v.r}. oldu.`,win:v=>`${v.n} kazandı!`}},
+ en:{brandSub:'Table',yourName:'Your name',namePh:'e.g. Alex',invited:"You're invited",hintA:'Room',hintB:'is waiting for you. Enter your name and join.',joinRoom:'Join room',
+  hostTitle:'Host an online room',hostDesc:'Open a room and send the invite link to your friends. You can fill empty seats with bots.',hostBtn:'Host room',
+  joinTitle:'Join with a code',joinDesc:'Enter the room code your friend sent you.',joinBtn:'Join',vsBot:'Play vs computer',sameDev:'Same device',players:'Players',startBtn:'Start',
+  rules:'Rules: Roll a 6 to bring a piece out. A 6 gives you another roll, but three 6s in a row ends your turn. Land on an opponent to send it home and roll again. Star squares and colored start squares are safe. First to bring all four pieces home wins. You have 20 seconds per move; when time runs out, the move is made for you.',
+  back:'← Main menu',roomCode:'Room code',copyInvite:'Copy invite link',waShare:'Share on WhatsApp',playersTitle:'Players',startGame:'Start game',
+  gameOver:'Game over',again:'Play again',menu:'Main menu',hostRestarts:'The host starts the next game.',reconnecting:'Connection lost, reconnecting…',timeout:n=>`${n} ran out of time, the move was made automatically.`,secs:n=>`${n}s`,mute:'Mute sound',unmute:'Turn sound on',
+  col:{red:'Red',green:'Green',yellow:'Yellow',blue:'Blue'},bot:'Bot',you:'You',offline:'Offline',place:n=>['1st','2nd','3rd','4th'][n-1]+' place',inHome:n=>`${n}/4 home`,
+  piece:(c,i)=>`${c} piece ${i}`,rollDie:'Roll the die',die:'Die',
+  yourRoll:'Your turn, roll the die.',pickPiece:'Tap the piece you want to move.',turnOf:n=>`Turn: ${n}`,room:c=>`Room ${c}`,
+  isHost:"You're the host",joined:'You joined the room',empty:'Empty seat',addBot:'Add bot',remove:'Remove',
+  connecting:'Connecting to the room…',need2:'You need at least 2 players to start. Wait for a friend or add a bot.',ready:n=>`${n} players ready.`,
+  waitHost:'Waiting for the host to start the game.',full:'The room is full. You can watch once the game starts.',
+  nameFirst:'Enter your name first.',code4:'Room codes are 4 characters.',inviteText:l=>`Let's play Ludo! Join my room: ${l}`,copied:'Invite link copied.',
+  err:{no_room:'No room found with that code. Check the code or host a new room.',conn:"Couldn't connect. Refresh the page."},
+  m:{start:v=>`Game started. ${v.n} goes first.`,three6:v=>`${v.n} rolled three 6s in a row and loses the turn.`,nomove:v=>`${v.n} rolled ${v.d}, no piece can move.`,
+     rolled:v=>`${v.n} rolled ${v.d}.`,cap:v=>`${v.n} sent a piece home! Roll again.`,fin:v=>`${v.n} brought a piece home!`,
+     done:v=>`${v.n} finished all pieces! ${['1st','2nd','3rd','4th'][v.r-1]} place.`,win:v=>`${v.n} wins!`}}
+};
+let LANG=(store('ludo-lang')||((navigator.language||'').toLowerCase().startsWith('tr')?'tr':'en'));
+if(!I18N[LANG]) LANG='en';
+const T=k=>I18N[LANG][k];
+/** Koltuktaki oyuncunun ekranda görünen adı (botlar ve isimsizler renk adıyla). */
+function nameOf(c){const se=S&&S.seats[c];if(!se)return T('col')[c];if(se.bot)return `${T('bot')} ${T('col')[c]}`;return se.nick||T('col')[c]}
+function fmtMsg(m){if(!m||typeof m!=='object'||!COLORS.includes(m.c))return '';const f=T('m')[m.k];if(!f)return '';
+  return f({n:nameOf(m.c),d:Number(m.d)||0,r:Math.min(4,Math.max(1,Number(m.r)||1))})}
+function applyLang(){
+  document.documentElement.lang=LANG;
+  $$('[data-i18n]').forEach(el=>{const v=T(el.dataset.i18n);if(typeof v==='string')el.textContent=v});
+  $$('[data-i18n-ph]').forEach(el=>el.placeholder=T(el.dataset.i18nPh));
+  $$('.sndbtn').forEach(b=>{b.setAttribute('aria-pressed',SND.on);b.setAttribute('aria-label',SND.on?T('mute'):T('unmute'))});
+  $$('.langbtn').forEach(b=>{b.textContent=LANG==='tr'?'EN':'TR';b.setAttribute('aria-label',LANG==='tr'?'Switch to English':'Türkçeye geç')});
+  COLORS.forEach(c=>pcEl[c]&&pcEl[c].forEach((b,i)=>b.setAttribute('aria-label',T('piece')(T('col')[c],i+1))));
+  if(mode!==null) render();
+}
+
+
+/* ================= ses (tarayıcıda üretilir, dosya gerekmez) ================= */
+const SND={ctx:null,on:store('ludo-sound')!=='off'};
+function ac(){try{if(!SND.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;SND.ctx=new C()}
+  if(SND.ctx.state==='suspended')SND.ctx.resume();return SND.ctx}catch(e){return null}}
+document.addEventListener('pointerdown',()=>{if(SND.on)ac()},{passive:true});
+function tone(f,dur,o={}){if(!SND.on)return;const c=ac();if(!c)return;const t=c.currentTime+(o.at||0),vol=o.vol||.15;
+  const os=c.createOscillator(),g=c.createGain();os.type=o.type||'sine';os.frequency.setValueAtTime(f,t);
+  if(o.slide)os.frequency.exponentialRampToValueAtTime(Math.max(40,f+o.slide),t+dur);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  os.connect(g);g.connect(c.destination);os.start(t);os.stop(t+dur+.03)}
+function noise(dur,o={}){if(!SND.on)return;const c=ac();if(!c)return;const t=c.currentTime+(o.at||0);
+  const b=c.createBuffer(1,Math.ceil(c.sampleRate*dur),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+  const src=c.createBufferSource();src.buffer=b;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=o.hz||2500;f.Q.value=1.2;
+  const g=c.createGain();g.gain.value=o.vol||.3;src.connect(f);f.connect(g);g.connect(c.destination);src.start(t)}
+const sfx={
+  roll(){for(let k=0;k<6;k++)noise(.045,{at:k*.068+Math.random()*.02,vol:.35,hz:1800+Math.random()*1800})},
+  six(){tone(1046,.16,{vol:.1,at:.5});tone(1568,.24,{vol:.09,at:.58})},
+  step(){tone(700,.05,{type:'triangle',vol:.1})},
+  cap(){tone(420,.28,{type:'sawtooth',vol:.08,slide:-280});noise(.14,{vol:.35,hz:500})},
+  home(){[523,659,784,1046].forEach((f,i)=>tone(f,.18,{type:'triangle',vol:.11,at:i*.08}))},
+  turn(){tone(784,.12,{vol:.11});tone(1175,.2,{vol:.1,at:.12})},
+  tick(){tone(1250,.035,{type:'square',vol:.04})},
+  timeout(){tone(260,.32,{type:'square',vol:.06,slide:-80})},
+  win(){[523,659,784,1046,784,1046,1318].forEach((f,i)=>tone(f,.24,{type:'triangle',vol:.12,at:i*.12}))},
+  lose(){[440,392,349,294].forEach((f,i)=>tone(f,.3,{type:'triangle',vol:.09,at:i*.2}))}
+};
 
 /* ================= app state ================= */
 let mode=null;          // 'local' | 'online'
@@ -259,7 +353,7 @@ const board=$('#board'); const pcEl={};
   TRACK.forEach(([x,y],i)=>{const sc=startOf[i]; if(sc) add('cell col',x,y,sc,'★'); else add('cell',x,y,null,SAFE.has(i)?'★':'')});
   COLORS.forEach(c=>HOME[c].forEach(([x,y])=>add('cell col',x,y,c)));
   add('center',6,6);
-  COLORS.forEach(c=>{pcEl[c]=[];for(let i=0;i<4;i++){const b=document.createElement('button');b.className='pc';b.style.setProperty('--c',`var(--${c})`);b.setAttribute('aria-label',`${NAME[c]} taş ${i+1}`);
+  COLORS.forEach(c=>{pcEl[c]=[];for(let i=0;i<4;i++){const b=document.createElement('button');b.className='pc';b.style.setProperty('--c',`var(--${c})`);
     b.onclick=()=>{if(b.classList.contains('can')) act({t:'move',i})}; board.appendChild(b); pcEl[c].push(b)}});
 })();
 function baseSpot(c,i){const [x,y]=QUAD[c];return [x+(i%2?4:2),y+(i<2?2:4)]}
@@ -271,7 +365,7 @@ function posXY(c,p,i){
 }
 
 /* ================= rendering ================= */
-let shown=null, shownGame=-1, shownRoll=0, animTok=0, rollingUntil=0, overT=null;
+let shown=null, shownGame=-1, shownRoll=0, animTok=0, rollingUntil=0, overT=null, clockOff=0, seenKey=null, sndLast=null, sndTurn=null, sndOver=null, sndTo=null, tickSec=null;
 function show(id){$$('.screen').forEach(s=>s.hidden=s.id!==id)}
 function layoutPieces(){
   if(!S) return; const groups={};
@@ -290,8 +384,8 @@ function syncPieces(){
   const run=()=>{ if(tok!==animTok) return;
     const seq=[];steps.forEach(m=>{if(m.fr<0)seq.push([m.c,m.i,0]);else for(let p=m.fr+1;p<=m.to;p++)seq.push([m.c,m.i,p])});
     let k=0;const tick=()=>{ if(tok!==animTok) return;
-      if(k<seq.length){const [c,i,p]=seq[k++];shown[c][i]=p;layoutPieces();setTimeout(tick,125);return}
-      snaps.forEach(m=>shown[m.c][m.i]=m.to); layoutPieces(); renderControls(); };
+      if(k<seq.length){const [c,i,p]=seq[k++];shown[c][i]=p;layoutPieces();sfx.step();setTimeout(tick,125);return}
+      snaps.forEach(m=>shown[m.c][m.i]=m.to); layoutPieces(); renderControls(); moveSounds(); };
     tick(); };
   if(steps.length||snaps.length){ if(delay) setTimeout(run,delay); else run(); }
 }
@@ -300,17 +394,17 @@ function canControl(){if(!S||S.phase!=='play')return false;const se=S.seats[S.tu
 function animIdle(){if(!shown)return true;return COLORS.every(c=>S.pcs[c].every((p,i)=>shown[c][i]===p))}
 function renderPanels(){
   $$('.pl').forEach(pl=>{const c=pl.dataset.c,se=S.seats[c];pl.style.setProperty('--c',`var(--${c})`);
-    if(!pl.firstChild){pl.innerHTML='<button class="die" aria-label="Zar at"></button><div class="who"><div class="nm"></div><div class="sub"></div></div>';
+    if(!pl.firstChild){pl.innerHTML='<button class="die" aria-label="Zar at"></button><div class="who"><div class="nm"></div><div class="sub"></div><div class="tm" hidden><div class="bar"><i></i></div><span class="secs"></span></div></div>';
       const dd=pl.querySelector('.die');for(let k=0;k<9;k++)dd.appendChild(document.createElement('i'));dd.onclick=()=>{if(dd.classList.contains('mine'))act({t:'roll'})}}
     pl.classList.toggle('ghost',!se);if(!se)return;
     pl.classList.toggle('turn',S.phase==='play'&&S.turn===c);
-    pl.querySelector('.nm').textContent=se.nick;
+    pl.querySelector('.nm').textContent=nameOf(c);
     const sub=pl.querySelector('.sub');sub.textContent='';
     const tag=(t,cl)=>{const s=document.createElement('span');s.className='tag'+(cl?' '+cl:'');s.textContent=t;sub.appendChild(s)};
-    if(se.pid===PID&&!se.bot&&mode==='online') tag('Sen','me');
-    if(se.bot) tag('Bot'); if(se.off) tag('Çevrimdışı','off');
-    const r=S.ranks.indexOf(c); if(r>=0) tag(`${r+1}. oldu`,'me');
-    else{const home=S.pcs[c].filter(p=>p===56).length; if(home) tag(`${home}/4 içeride`)}
+    if(se.pid===PID&&!se.bot&&mode==='online') tag(T('you'),'me');
+    if(se.bot) tag(T('bot')); if(se.off) tag(T('offline'),'off');
+    const r=S.ranks.indexOf(c); if(r>=0) tag(T('place')(r+1),'me');
+    else{const home=S.pcs[c].filter(p=>p===56).length; if(home) tag(T('inHome')(home))}
   });
 }
 function renderControls(){
@@ -321,59 +415,84 @@ function renderControls(){
     let face=null; if(active&&S.dice!=null) face=S.dice; else if(S.lastRoll&&S.lastRoll.c===c) face=S.lastRoll.d;
     setDie(dd,face); dd.classList.toggle('blank',!face); dd.classList.toggle('live',active);
     const mine=active&&myTurn&&S.dice==null&&!waiting&&!rolling;
-    dd.classList.toggle('mine',mine); dd.disabled=!mine; dd.setAttribute('aria-label',mine?'Zar at':'Zar');
+    dd.classList.toggle('mine',mine); dd.disabled=!mine; dd.setAttribute('aria-label',mine?T('rollDie'):T('die'));
   });
   const can=new Set(); if(myTurn&&S.dice!=null&&!waiting&&!rolling&&animIdle()) legal(S,S.turn,S.dice).forEach(i=>can.add(i));
   COLORS.forEach(c=>pcEl[c].forEach((el,i)=>el.classList.toggle('can',c===S.turn&&can.has(i))));
   const st=$('#status');st.textContent='';
   if(S.phase==='play'){const se=S.seats[S.turn];
-    const lead=document.createElement('span');lead.textContent=S.msg?S.msg+' ':'';st.appendChild(lead);
+    const lead=document.createElement('span');const mt=fmtMsg(S.msg);lead.textContent=mt?mt+' ':'';st.appendChild(lead);
     const b=document.createElement('b');
-    b.textContent=myTurn?(S.dice==null?'Sıra sende, zarı at.':'Oynatacağın taşa dokun.'):`Sıra: ${se?se.nick:''}`;
+    b.textContent=myTurn?(S.dice==null?T('yourRoll'):T('pickPiece')):T('turnOf')(nameOf(S.turn));
     st.appendChild(b);
-  } else st.textContent=S.msg||'';
+  } else st.textContent=fmtMsg(S.msg);
 }
 function renderOver(){
   const ov=$('#over'); clearTimeout(overT); if(!S||S.phase!=='over'||mode===null){ov.hidden=true;return}
   const list=$('#rankList');list.textContent='';
   S.ranks.forEach((c,k)=>{const li=document.createElement('li');const p=document.createElement('span');p.className='pos';p.textContent=k+1;
-    const t=document.createElement('span');t.className='tag';t.style.background=`var(--${c})`;t.style.color='#fff';t.textContent=NAME[c];
-    const n=document.createElement('span');n.textContent=nk(S,c);li.append(p,t,n);list.appendChild(li)});
+    const t=document.createElement('span');t.className='tag';t.style.background=`var(--${c})`;t.style.color='#fff';t.textContent=T('col')[c];
+    const n=document.createElement('span');n.textContent=nameOf(c);li.append(p,t,n);list.appendChild(li)});
   const canRe=mode==='local'||isHost(); $('#againBtn').hidden=!canRe; $('#overNote').hidden=canRe;
   if(ov.hidden) overT=setTimeout(()=>{ if(S&&S.phase==='over') ov.hidden=false },1400);
 }
 const inviteLink=()=>`${location.origin}${location.pathname}?oda=${CODE}`;
 function renderLobby(){
   $('#lobbyCode').textContent=CODE||'····';
-  $('#lobbyRole').textContent=!S?'':isHost()?'Oda kurucusu sensin':'Odaya katıldın';
+  $('#lobbyRole').textContent=!S?'':isHost()?T('isHost'):T('joined');
   if(CODE){$('#inviteLink').textContent=inviteLink();
-    $('#waShare').href='https://wa.me/?text='+encodeURIComponent(`Ludo oynayalım! Odaya gel: ${inviteLink()}`)}
+    $('#waShare').href='https://wa.me/?text='+encodeURIComponent(T('inviteText')(inviteLink()))}
   const list=$('#seatList');list.textContent='';
   SEAT_ORDER.forEach(c=>{const se=S&&S.seats[c];const row=document.createElement('div');row.className='seat';row.style.setProperty('--c',`var(--${c})`);
-    const t=document.createElement('span');t.className='tok';const n=document.createElement('span');n.className='nm'+(se?'':' empty');n.textContent=se?se.nick:'Boş yer';row.append(t,n);
-    if(se&&se.pid===PID&&!se.bot){const g=document.createElement('span');g.className='tag me';g.textContent='Sen';row.appendChild(g)}
-    if(se&&se.bot){const g=document.createElement('span');g.className='tag';g.textContent='Bot';row.appendChild(g)}
-    if(isHost()){ if(!se){const b=document.createElement('button');b.className='mini';b.textContent='Bot ekle';b.onclick=()=>net({t:'addbot',c});row.appendChild(b)}
-      else if(se.bot){const b=document.createElement('button');b.className='mini';b.textContent='Çıkar';b.onclick=()=>net({t:'rmbot',c});row.appendChild(b)} }
+    const t=document.createElement('span');t.className='tok';const n=document.createElement('span');n.className='nm'+(se?'':' empty');n.textContent=se?nameOf(c):T('empty');row.append(t,n);
+    if(se&&se.pid===PID&&!se.bot){const g=document.createElement('span');g.className='tag me';g.textContent=T('you');row.appendChild(g)}
+    if(se&&se.bot){const g=document.createElement('span');g.className='tag';g.textContent=T('bot');row.appendChild(g)}
+    if(isHost()){ if(!se){const b=document.createElement('button');b.className='mini';b.textContent=T('addBot');b.onclick=()=>net({t:'addbot',c});row.appendChild(b)}
+      else if(se.bot){const b=document.createElement('button');b.className='mini';b.textContent=T('remove');b.onclick=()=>net({t:'rmbot',c});row.appendChild(b)} }
     list.appendChild(row)});
   const n=S?COLORS.filter(c=>S.seats[c]).length:0, me=S&&COLORS.some(c=>S.seats[c]&&S.seats[c].pid===PID);
   $('#startBtn').hidden=!isHost(); $('#startBtn').disabled=n<2;
-  $('#lobbyMsg').textContent=!S?'Odaya bağlanılıyor…':isHost()?(n<2?'Başlamak için en az 2 oyuncu gerekli. Arkadaşını bekle ya da bot ekle.':`${n} oyuncu hazır.`)
-    :me?'Oda kurucusunun oyunu başlatması bekleniyor.':'Oda dolu. Oyun başlayınca izleyici olarak bakabilirsin.';
+  $('#lobbyMsg').textContent=!S?T('connecting'):isHost()?(n<2?T('need2'):T('ready')(n)):me?T('waitHost'):T('full');
 }
 function render(){
   if(mode===null) return;
   if(mode==='online'&&(!S||S.phase==='lobby')){show('lobby');renderLobby();$('#over').hidden=true;return}
   show('game');
-  $('#gameRoom').textContent=mode==='online'?`Oda ${CODE}`:'';
+  $('#gameRoom').textContent=mode==='online'?T('room')(CODE):'';
   if(S.lastRoll&&S.lastRoll.id!==shownRoll&&shownGame===S.game){
     shownRoll=S.lastRoll.id; const dd=$(`.pl[data-c="${S.lastRoll.c}"] .die`);
-    if(dd){rollingUntil=Date.now()+480;dd.classList.remove('rolling');void dd.offsetWidth;dd.classList.add('rolling');dd.classList.remove('blank');
+    if(dd){rollingUntil=Date.now()+480;sfx.roll();if(S.lastRoll.d===6)sfx.six();dd.classList.remove('rolling');void dd.offsetWidth;dd.classList.add('rolling');dd.classList.remove('blank');
       let n=0;const iv=setInterval(()=>{setDie(dd,1+rnd(6));if(++n>5)clearInterval(iv)},70);
       setTimeout(()=>{dd.classList.remove('rolling');renderControls()},490)}
   } else if(S.lastRoll) shownRoll=S.lastRoll.id;
-  renderPanels(); syncPieces(); renderControls(); renderOver();
+  renderPanels(); syncPieces(); renderControls(); renderOver(); eventSounds(); tickTimer();
 }
+/** Bir oyuna/odaya ilk girildiğinde geçmiş olaylar için ses çalmamak üzere işaretleri sıfırlar. */
+function primeSounds(){sndLast=S.last?`${S.game}:${S.last.id}:${S.last.c}:${S.last.i}`:null;sndTurn=S.stepKey;sndOver=S.phase==='over'?S.game:null;sndTo=S.to?`${S.game}:${S.to.n}`:null;seenKey=`${CODE}:${S.game}`}
+function moveSounds(){ if(!S||!S.last) return; const k=`${S.game}:${S.last.id}:${S.last.c}:${S.last.i}`; if(k===sndLast) return; sndLast=k;
+  if(S.last.cap) sfx.cap(); else if(S.last.to===56) sfx.home(); }
+function eventSounds(){
+  if(!S) return; if(seenKey!==`${CODE}:${S.game}`) primeSounds();
+  const myRoll=canControl()&&S.dice==null?S.stepKey:null;
+  if(myRoll&&myRoll!==sndTurn) setTimeout(()=>{ if(canControl()&&S.stepKey===myRoll) sfx.turn() },Math.max(350,rollingUntil-Date.now()+700));
+  sndTurn=S.stepKey;
+  if(S.to){const k=`${S.game}:${S.to.n}`; if(k!==sndTo){sndTo=k; sfx.timeout(); toast(T('timeout')(nameOf(S.to.c)))}}
+  if(S.phase==='over'&&sndOver!==S.game){sndOver=S.game; const mine=COLORS.filter(c=>S.seats[c]&&!S.seats[c].bot&&S.seats[c].pid===PID);
+    setTimeout(()=>{ (mine.length===0||mine.includes(S.ranks[0])||mode==='local'&&!S.order.some(c=>S.seats[c]&&S.seats[c].bot)) ? sfx.win() : sfx.lose() },900)}
+}
+/** Aktif oyuncunun süre çubuğunu günceller; son 5 saniyede sıra sendeyse tik sesi çalar. */
+function tickTimer(){
+  $$('.pl').forEach(pl=>{const tm=pl.querySelector('.tm');if(!tm)return;const c=pl.dataset.c;
+    const on=mode!==null&&S&&S.phase==='play'&&S.turn===c&&S.turnEnds;
+    tm.hidden=!on; if(!on) return;
+    const left=Math.max(0,S.turnEnds-(Date.now()+clockOff)), sec=Math.ceil(left/1000);
+    tm.querySelector('i').style.width=(left/TURN_MS*100)+'%';
+    tm.querySelector('.secs').textContent=T('secs')(sec);
+    tm.classList.toggle('warn',sec<=5);
+    if(sec<=5&&sec>0&&canControl()&&tickSec!==`${S.stepKey}:${sec}`){tickSec=`${S.stepKey}:${sec}`;sfx.tick()}
+  });
+}
+setInterval(()=>{ if(S&&mode!==null&&S.phase==='play') tickTimer() },250);
 
 /* ================= actions ================= */
 function act(a){
@@ -382,15 +501,16 @@ function act(a){
   if(waiting) return; waiting=true; net({t:'act',a}); renderControls();
   setTimeout(()=>{if(waiting){waiting=false;renderControls()}},2500);
 }
-function commitLocal(s){S=s;render();scheduleLocalBot()}
+function commitLocal(s){armTimer(s,Date.now());clockOff=0;S=s;render();scheduleLocalBot()}
 function scheduleLocalBot(){
   clearTimeout(botT); if(mode!=='local'||!S||S.phase!=='play') return;
-  const se=S.seats[S.turn]; if(!se||!se.bot) return;
-  botT=setTimeout(()=>{ if(mode!=='local'||!S||S.phase!=='play') return; const s=clone(S); botStep(s); commitLocal(s) }, S.dice==null?1000:800);
+  const se=S.seats[S.turn]; if(!se) return; const key=S.stepKey, human=!se.bot;
+  const wait=human?Math.max(0,S.turnEnds-Date.now()):(S.dice==null?1000:800);
+  botT=setTimeout(()=>{ if(mode!=='local'||!S||S.phase!=='play'||S.stepKey!==key) return; const s=clone(S); human?timeoutStep(s):botStep(s); commitLocal(s) }, wait);
 }
 function startLocal(n,bots){
   disconnect(); mode='local'; CODE=null; shown=null;
-  const s=newState(); SEAT_ORDER.slice(0,n).forEach((c,k)=>{ s.seats[c]= bots&&k>0 ? {pid:'bot-'+c,nick:'Bot '+NAME[c],bot:true} : {pid:PID,nick:bots?(nick||'Sen'):NAME[c],bot:false} });
+  const s=newState(); SEAT_ORDER.slice(0,n).forEach((c,k)=>{ s.seats[c]= bots&&k>0 ? {pid:'bot-'+c,nick:'',bot:true} : {pid:PID,nick:bots?nick:'',bot:false} });
   startGame(s); commitLocal(s);
 }
 
@@ -403,17 +523,17 @@ function connect(){
     if(want) net(want.create?{t:'create',nick}:{t:'join',code:want.code,nick}) };
   ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(_){return}
     if(m.t==='joined'){CODE=m.code;want={code:m.code};setUrl(m.code);render()}
-    else if(m.t==='state'){ if(mode!=='online') return; S=m.st; waiting=false; render() }
-    else if(m.t==='error'){ toast(m.msg); if(m.code==='no_room') toMenu() }
+    else if(m.t==='state'){ if(mode!=='online') return; if(typeof m.now==='number') clockOff=m.now-Date.now(); S=m.st; waiting=false; render() }
+    else if(m.t==='error'){ toast((T('err')[m.code])||T('err').conn); if(m.code==='no_room') toMenu() }
   };
   ws.onclose=()=>{ ws=null; waiting=false; if(mode==='online'){ $('#netbar').hidden=false; setTimeout(connect,Math.min(5000,800*(++retry))) } };
 }
 function disconnect(){ want=null; if(ws){ try{net({t:'leave'});ws.onclose=null;ws.close()}catch(e){} ws=null } $('#netbar').hidden=true; clearTimeout(botT); setUrl(null) }
-function needNick(){ if(!nick){toast('Önce adını yaz.');$('#nick').focus();return true} return false }
+function needNick(){ if(!nick){toast(T('nameFirst'));$('#nick').focus();return true} return false }
 function hostRoom(){ if(needNick())return; disconnect(); mode='online'; S=null; shown=null; CODE=null; want={create:true}; render(); connect() }
 function joinRoom(code){
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if(code.length<4){toast('Oda kodu 4 karakter olmalı.');return}
+  if(code.length<4){toast(T('code4'));return}
   if(needNick())return;
   disconnect(); mode='online'; S=null; shown=null; CODE=code; want={code}; render(); connect();
 }
@@ -437,8 +557,8 @@ $('#lobbyBack').onclick=toMenu;$('#gameBack').onclick=toMenu;$('#overMenu').oncl
 $('#startBtn').onclick=()=>net({t:'start'});
 $('#againBtn').onclick=()=>{$('#over').hidden=true; if(mode==='local'){const s=clone(S);startGame(s);commitLocal(s)} else net({t:'again'})};
 $('#copyInvite').onclick=async()=>{
-  const text=`Ludo oynayalım! Odaya gel: ${inviteLink()}`;
-  try{await navigator.clipboard.writeText(text);toast('Davet linki kopyalandı.')}
+  const text=T('inviteText')(inviteLink());
+  try{await navigator.clipboard.writeText(text);toast(T('copied'))}
   catch(e){toast(inviteLink())}
 };
 // davet linkiyle gelindiyse
@@ -446,6 +566,9 @@ $('#copyInvite').onclick=async()=>{
   if(c.length>=4){$('#hintCode').textContent=c;$('#codeIn').value=c;$('#joinHint').hidden=false;
     // adı daha önce kaydedildiyse doğrudan odaya gir
     if(nick) joinRoom(c); else $('#nick').focus()}})();
+$$('.sndbtn').forEach(b=>b.onclick=()=>{SND.on=!SND.on;store('ludo-sound',SND.on?'on':'off');if(SND.on){ac();sfx.turn()}applyLang()});
+$$('.langbtn').forEach(b=>b.onclick=()=>{LANG=LANG==='tr'?'en':'tr';store('ludo-lang',LANG);applyLang()});
+applyLang();
 if(mode===null) show('menu');
 </script>
 
