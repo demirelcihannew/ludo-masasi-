@@ -11,6 +11,13 @@
     yellow: [[13,7],[12,7],[11,7],[10,7],[9,7]], blue: [[7,13],[7,12],[7,11],[7,10],[7,9]]
   };
   const SAFE = new Set([0, 8, 13, 21, 26, 34, 39, 47]);
+  const TEAM = { red: 0, yellow: 0, green: 1, blue: 1 };   // karşılıklı oturanlar aynı takım
+  const TEAM_OF = c => TEAM[c];
+  const MATE = { red: 'yellow', yellow: 'red', green: 'blue', blue: 'green' };
+  /** Takımlı modda iki rengin aynı takımda olup olmadığı. */
+  const isMate = (s, a, b) => !!s.teams && a !== b && TEAM[a] === TEAM[b];
+  /** Takımlı mod yalnızca 4 oyuncuyla oynanır. */
+  const teamsOk = s => COLORS.filter(c => s.seats[c]).length === 4;
   const TURN_MS = 20000;   // her karar (zar atma / taş seçme) için süre
 
   function rnd(n) {
@@ -24,11 +31,12 @@
   function newState() {
     return { v: 1, seq: 0, phase: 'lobby', seats: { red: null, green: null, yellow: null, blue: null }, order: [], turn: null,
       dice: null, sixes: 0, pcs: { red: [-1,-1,-1,-1], green: [-1,-1,-1,-1], yellow: [-1,-1,-1,-1], blue: [-1,-1,-1,-1] },
-      ranks: [], lastRoll: null, rollId: 0, last: null, msg: null, game: 0 };
+      ranks: [], lastRoll: null, rollId: 0, last: null, msg: null, game: 0, teams: false, winTeam: null };
   }
   function startGame(s) {
     s.phase = 'play'; s.order = COLORS.filter(c => s.seats[c]); s.turn = s.order[0]; s.dice = null; s.sixes = 0;
     s.ranks = []; s.last = null; s.lastRoll = null; s.game = (s.game || 0) + 1;
+    s.teams = !!s.teams && teamsOk(s); s.winTeam = null;
     COLORS.forEach(c => (s.pcs[c] = [-1, -1, -1, -1]));
     s.msg = { k: 'start', c: s.turn };
   }
@@ -55,7 +63,7 @@
     const c = s.turn, d = s.dice, p = s.pcs[c][i], np = p < 0 ? 0 : p + d; s.pcs[c][i] = np; let cap = 0;
     if (np <= 50) {
       const g = gIdx(c, np);
-      if (!SAFE.has(g)) s.order.forEach(o => { if (o === c) return;
+      if (!SAFE.has(g)) s.order.forEach(o => { if (o === c || isMate(s, o, c)) return;   // takım arkadaşı kırılmaz
         s.pcs[o].forEach((q, j) => { if (q >= 0 && q <= 50 && gIdx(o, q) === g) { s.pcs[o][j] = -1; cap++; } }); });
     }
     s.last = { c, i, from: p, to: np, cap, id: s.rollId };
@@ -63,8 +71,16 @@
     if (cap) s.msg = { k: 'cap', c };
     else if (fin) s.msg = { k: 'fin', c };
     if (s.pcs[c].every(q => q === 56) && !s.ranks.includes(c)) { s.ranks.push(c); s.msg = { k: 'done', c, r: s.ranks.length }; }
-    const rest = s.order.filter(x => !s.ranks.includes(x));
-    if (rest.length <= 1) { s.ranks.push(...rest); s.phase = 'over'; s.dice = null; s.msg = { k: 'win', c: s.ranks[0] }; return; }
+    if (s.teams) {
+      const t = TEAM[c], mates = s.order.filter(x => TEAM[x] === t);
+      if (mates.every(x => s.ranks.includes(x))) {
+        s.order.forEach(x => { if (!s.ranks.includes(x)) s.ranks.push(x); });
+        s.winTeam = t; s.phase = 'over'; s.dice = null; s.msg = { k: 'winTeam', c }; return;
+      }
+    } else {
+      const rest = s.order.filter(x => !s.ranks.includes(x));
+      if (rest.length <= 1) { s.ranks.push(...rest); s.phase = 'over'; s.dice = null; s.msg = { k: 'win', c: s.ranks[0] }; return; }
+    }
     nextTurn(s, (d === 6 || cap > 0 || fin) && !s.ranks.includes(c));
     if (s.ranks.includes(c)) nextTurn(s, false);
   }
@@ -78,7 +94,7 @@
   }
   function botPick(s) {
     const c = s.turn, d = s.dice, mv = legal(s, c, d); let best = mv[0], bs = -1e9;
-    const opp = s.order.filter(o => o !== c && !s.ranks.includes(o));
+    const opp = s.order.filter(o => o !== c && !s.ranks.includes(o) && !isMate(s, o, c));
     const threatAt = g => opp.some(o => s.pcs[o].some(q => q >= 0 && q <= 50 && [1,2,3,4,5,6].some(k => (gIdx(o, q) + k) % 52 === g)));
     for (const i of mv) {
       const p = s.pcs[c][i], np = p < 0 ? 0 : p + d; let sc = np * 0.3;
@@ -107,6 +123,6 @@
   /** Bot (ya da çevrimdışı oyuncu yerine) bir adım oynar. */
   function botStep(s) { if (s.dice == null) roll(s); else doMove(s, botPick(s)); }
 
-  const E = { COLORS, SEAT_ORDER, NAME, TRACK, OFF, HOME, SAFE, rnd, nk, gIdx, newState, startGame, legal, roll, doMove, applyAct, botPick, botStep, TURN_MS, stepKey, armTimer, timeoutStep };
+  const E = { COLORS, SEAT_ORDER, NAME, TRACK, OFF, HOME, SAFE, rnd, nk, gIdx, newState, startGame, legal, roll, doMove, applyAct, botPick, botStep, TURN_MS, stepKey, armTimer, timeoutStep, TEAM, TEAM_OF, MATE, isMate, teamsOk };
   if (typeof module !== 'undefined' && module.exports) module.exports = E; else window.LudoEngine = E;
 })();

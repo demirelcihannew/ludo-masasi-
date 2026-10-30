@@ -60,6 +60,7 @@ function refresh(room) {
     const any = [...present][0];
     if (seated || any) room.hostPid = seated ? seated.pid : any;
   }
+  if (st.phase === 'lobby' && st.teams && !E.teamsOk(st)) st.teams = false;
   room.emptySince = room.clients.size ? 0 : (room.emptySince || Date.now());
 }
 
@@ -134,6 +135,9 @@ function handle(ws, m) {
   }
   if (m.t === 'rmbot' && E.COLORS.includes(m.c) && st.seats[m.c] && st.seats[m.c].bot && st.phase === 'lobby') {
     st.seats[m.c] = null; return changed(room);
+  }
+  if (m.t === 'teams' && st.phase === 'lobby') {
+    st.teams = !!m.on && E.teamsOk(st); return changed(room);
   }
   if (m.t === 'start' && st.phase === 'lobby' && E.COLORS.filter(c => st.seats[c]).length >= 2) { E.startGame(st); return changed(room); }
   if (m.t === 'again' && st.phase === 'over') {
