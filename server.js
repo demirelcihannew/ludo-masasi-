@@ -29,6 +29,9 @@ const server = http.createServer((req, res) => {
 const rooms = new Map();   // kod -> oda
 const OFFLINE_BOT_MS = 15000;       // bağlantısı kopan oyuncunun yerine bot bu süreden sonra oynar
 const EMPTY_ROOM_MS = 30 * 60000;   // kimsenin kalmadığı oda bu süreden sonra silinir
+const CHAT_KEEP = 40;               // odada saklanan son mesaj sayısı
+const CHAT_GAP_MS = 600;            // aynı kişinin iki mesajı arasındaki en kısa süre
+const CHAT_MAX = 140;               // bir mesajdaki en fazla karakter
 
 function makeCode() {
   const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -36,6 +39,8 @@ function makeCode() {
 }
 const cleanNick = v => String(v || '').replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁯﻿]/g, '').trim().slice(0, 16);
 const cleanPid = v => (typeof v === 'string' && /^[a-z0-9]{6,40}$/i.test(v) ? v : null);
+// Mesajlar istemcide metin olarak basılır; burada yalnızca görünmez/kontrol karakterleri ayıklanır.
+const cleanText = v => String(v || '').replace(/[\u0000-\u0008\u000b-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/g, '').replace(/\s+/g, ' ').trim().slice(0, CHAT_MAX);
 
 function send(ws, msg) { if (ws.readyState === 1) ws.send(JSON.stringify(msg)); }
 function presentPids(room) { const s = new Set(); room.clients.forEach(ws => s.add(ws.pid)); return s; }
@@ -97,6 +102,7 @@ function joinRoom(ws, room, nick) {
     if (free) st.seats[free] = { pid: ws.pid, nick, bot: false };
   }
   send(ws, { t: 'joined', code: room.code });
+  if (room.chat.length) send(ws, { t: 'chatlog', items: room.chat });
   refresh(room); changed(room);
 }
 function leave(ws) {
@@ -112,7 +118,7 @@ function handle(ws, m) {
   if (!ws.pid) return send(ws, { t: 'error', code: 'conn' });
 
   if (m.t === 'create') {
-    const room = { code: makeCode(), st: E.newState(), hostPid: ws.pid, clients: new Set(), offSince: {}, botT: null, emptySince: 0 };
+    const room = { code: makeCode(), st: E.newState(), hostPid: ws.pid, clients: new Set(), offSince: {}, botT: null, emptySince: 0, chat: [], chatId: 0 };
     room.st.msg = null;
     rooms.set(room.code, room);
     return joinRoom(ws, room, cleanNick(m.nick));
@@ -128,6 +134,16 @@ function handle(ws, m) {
   const room = ws.room; if (!room) return;
   const st = room.st, isHost = ws.pid === room.hostPid;
 
+  if (m.t === 'chat') {
+    const text = cleanText(m.text); if (!text) return;
+    const now = Date.now(); if (now - (ws.lastChat || 0) < CHAT_GAP_MS) return; ws.lastChat = now;
+    const seat = seatOf(room, ws.pid);
+    const item = { id: ++room.chatId, pid: ws.pid, c: seat || null, nick: cleanNick(seat ? st.seats[seat].nick : m.nick), text };
+    room.chat.push(item); if (room.chat.length > CHAT_KEEP) room.chat.shift();
+    const out = JSON.stringify({ t: 'chat', item });
+    room.clients.forEach(c => { if (c.readyState === 1) c.send(out); });
+    return;
+  }
   if (m.t === 'act') { if (E.applyAct(st, m.a, ws.pid)) changed(room); return; }
   if (!isHost) return;
   if (m.t === 'addbot' && E.COLORS.includes(m.c) && !st.seats[m.c] && st.phase === 'lobby') {
