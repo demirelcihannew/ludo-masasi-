@@ -4,28 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2a1c13">
-<meta property="og:title" content="Ludo Masası">
-<meta property="og:description" content="Arkadaşlarınla online Ludo oyna. Play Ludo online with friends.">
-<title>Ludo Masası</title>
+<meta property="og:title" content="Oyun Masası">
+<meta property="og:description" content="Arkadaşlarınla online Ludo ve Son Kart oyna. Play Ludo and Last Card online with friends.">
+<title>Oyun Masası</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23fff'/%3E%3Ccircle cx='9' cy='9' r='3.2' fill='%232a1c13'/%3E%3Ccircle cx='23' cy='23' r='3.2' fill='%232a1c13'/%3E%3Ccircle cx='16' cy='16' r='3.2' fill='%23e0453a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800;900&display=swap">
 <style>
-/* layout: walnut game table; square board centered between four corner player plaques; menu as stacked chunky cards */
 :root{
   --table:#2a1c13; --table-hi:#4a3020; --plaque:#3d2a1c; --plaque-hi:#573c28;
   --ink:#fff6e6; --muted:#d2bb9c; --faint:#9c8468;
-  --board:#fffaf0; --line:#e3d6c1;
   --red:#e0453a; --green:#2e9c5c; --yellow:#efb025; --blue:#2f76d2;
-  --accent:#efb025; --danger:#ff7b6b;
+  --accent:#efb025;
   --display:'Lilita One','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
   --body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
   color-scheme:dark;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
-html,body{height:100%}
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-[hidden]{display:none!important}
 *{-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
 body{
   margin:0;font-family:var(--body);color:var(--ink);
   background:
@@ -35,713 +33,154 @@ body{
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
 }
-button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.wrap{max-width:720px;margin:0 auto;padding-block:18px 28px;display:flex;flex-direction:column;gap:16px;min-height:100%;box-sizing:border-box}
-
-/* ---------- menu ---------- */
-.brand{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:8px}
-.word{display:flex;gap:8px}
-.word span{font-family:var(--display);font-size:clamp(34px,10vw,58px);line-height:1;width:1.25em;height:1.25em;display:grid;place-items:center;border-radius:.22em;color:#fff;
-  box-shadow:inset 0 -.12em 0 rgba(0,0,0,.25),0 .08em 0 rgba(0,0,0,.35);transform:rotate(var(--r))}
-.brand small{font-family:var(--display);letter-spacing:.3em;font-size:15px;color:var(--muted);text-transform:uppercase}
-.card{background:var(--plaque);border:1px solid var(--plaque-hi);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 4px 0 rgba(0,0,0,.25)}
-.card h2{font-family:var(--display);font-weight:400;font-size:22px;margin:0;letter-spacing:.02em}
-.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
-label.fld{display:flex;flex-direction:column;gap:6px;font-weight:800;font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-input[type=text]{background:var(--table);border:2px solid var(--plaque-hi);color:var(--ink);border-radius:10px;padding:11px 12px;font:700 16px var(--body);width:100%;box-sizing:border-box}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.row > *{min-width:0}
-.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:900;font-size:15px;background:var(--plaque-hi);box-shadow:0 3px 0 rgba(0,0,0,.35);transition:transform .08s}
-.btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
-.btn.go{background:var(--accent);color:#3a2300}
-.btn.big{font-family:var(--display);font-weight:400;font-size:20px;letter-spacing:.02em;padding:14px 18px}
-.btn[disabled]{opacity:.45;cursor:not-allowed}
-.seg{display:flex;background:var(--table);border-radius:10px;padding:3px;gap:3px}
-.seg button{border:0;background:transparent;border-radius:8px;padding:8px 12px;font-weight:800;color:var(--muted)}
-.seg button[aria-pressed=true]{background:var(--plaque-hi);color:var(--ink)}
-.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:560px){.modes{grid-template-columns:1fr}}
-.note{font-size:13px;color:var(--faint);line-height:1.45}
-.rooms{display:flex;flex-direction:column;gap:8px}
-.roomrow{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--table);border-radius:10px;padding:10px 12px}
-.roomrow b{font-family:var(--display);font-weight:400;letter-spacing:.12em}
-.roomrow span{color:var(--muted);font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-/* ---------- lobby ---------- */
-.code{font-family:var(--display);font-size:44px;letter-spacing:.18em;line-height:1}
-.seats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:460px){.seats{grid-template-columns:1fr}}
-.seat{display:flex;align-items:center;gap:10px;background:var(--table);border-radius:12px;padding:10px;min-height:48px}
-.seat .tok{width:28px;height:28px;border-radius:50%;background:var(--c);border:3px solid #fff;flex:none;box-shadow:0 2px 0 rgba(0,0,0,.35)}
-.seat .nm{flex:1;min-width:0;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.seat .nm.empty{color:var(--faint);font-weight:700}
-.tag{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:var(--plaque-hi);color:var(--muted);flex:none}
-.tag.me{background:var(--accent);color:#3a2300}
-.tag.off{background:#5b2a24;color:#ffb3a8}
-.mini{border:0;background:var(--plaque-hi);border-radius:8px;padding:6px 10px;font-weight:800;font-size:13px}
-
-/* ---------- game ---------- */
-.game{display:flex;flex-direction:column;gap:10px;align-items:center}
-.topbar{display:flex;justify-content:space-between;align-items:center;width:100%;gap:10px}
-.topbar .roomtag{font-weight:800;color:var(--muted);font-size:13px}
-.prow{display:flex;justify-content:space-between;gap:10px;width:100%;max-width:min(100%,600px,calc(100vh - 250px))}
-.pl{flex:1;min-width:0;max-width:48%;display:flex;align-items:center;gap:10px;background:var(--plaque);border:2px solid transparent;border-radius:14px;padding:8px 10px;transition:border-color .2s, transform .2s}
-.pl.right{flex-direction:row-reverse;text-align:right}
-.pl.turn{border-color:var(--c);transform:translateY(-2px);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 25%,transparent)}
-.pl.ghost{visibility:hidden}
-.pl .who{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
-.pl.right .who{align-items:flex-end}
-.pl .nm{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-.pl .sub{display:flex;gap:4px;flex-wrap:wrap}
-.die{--s:46px;width:var(--s);height:var(--s);flex:none;border-radius:10px;border:0;background:#fff;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:7px;box-sizing:border-box;box-shadow:inset 0 -3px 0 #d9cdb9,0 3px 0 rgba(0,0,0,.35);opacity:.35;cursor:default}
-.die i{width:72%;height:72%;margin:auto;border-radius:50%;background:transparent}
-.die i.on{background:#2a1c13}
-.die.live{opacity:1}
-.die.mine{cursor:pointer;animation:nudge 1s ease-in-out infinite}
-.die.rolling{opacity:1;animation:shake .45s linear}
-.die.blank i{background:transparent!important}
-@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-@keyframes shake{0%{transform:rotate(0)}25%{transform:rotate(-18deg) scale(1.08)}50%{transform:rotate(14deg)}75%{transform:rotate(-8deg) scale(1.05)}100%{transform:rotate(0)}}
-
-.board{position:relative;width:min(100%,600px,calc(100vh - 250px));min-width:260px;max-width:100%;aspect-ratio:1;background:var(--board);border-radius:12px;box-shadow:0 0 0 6px #1b120c,0 10px 30px rgba(0,0,0,.5);overflow:hidden;user-select:none;-webkit-user-select:none}
-.cell{position:absolute;width:6.6667%;height:6.6667%;box-shadow:inset 0 0 0 .5px var(--line);display:grid;place-items:center;color:#c9b99f;font-size:min(3.2vw,22px);line-height:1}
-.cell.col{background:var(--c);color:rgba(255,255,255,.85)}
-.quad{position:absolute;width:40%;height:40%;background:var(--c)}
-.yard{position:absolute;inset:16.67%;background:var(--board);border-radius:14%}
-.spot{position:absolute;width:30%;height:30%;border-radius:50%;background:color-mix(in srgb,var(--c) 28%,var(--board));transform:translate(-50%,-50%);box-shadow:inset 0 2px 0 rgba(0,0,0,.08)}
-.center{position:absolute;left:40%;top:40%;width:20%;height:20%;background:conic-gradient(from -45deg,var(--green) 0 25%,var(--yellow) 0 50%,var(--blue) 0 75%,var(--red) 0)}
-.pc{position:absolute;width:5.4%;aspect-ratio:1;border-radius:50%;border:0;padding:0;background:radial-gradient(circle at 36% 30%,rgba(255,255,255,.75) 0 14%,transparent 16%),radial-gradient(circle,var(--c) 0 46%,rgba(0,0,0,.18) 47% 52%,var(--c) 53%);box-shadow:0 0 0 2.5px #fff,0 3px 0 2px rgba(0,0,0,.35);transform:translate(-50%,-58%) scale(var(--k,1));transition:left .12s ease-out,top .12s ease-out,transform .15s;z-index:2;cursor:default}
-.pc[hidden]{display:none}
-.pc.can{cursor:pointer;z-index:5;animation:bob .55s ease-in-out infinite alternate;box-shadow:0 0 0 2.5px #fff,0 0 0 6px color-mix(in srgb,var(--c) 55%,transparent),0 3px 0 2px rgba(0,0,0,.35)}
-@keyframes bob{to{transform:translate(-50%,-78%) scale(var(--k,1))}}
-.status{min-height:22px;text-align:center;font-weight:800;color:var(--muted);font-size:15px;max-width:600px}
-.status b{color:var(--ink)}
-
-.overlay{position:fixed;inset:0;background:rgba(20,12,7,.72);display:grid;place-items:center;z-index:20;padding:20px}
-.overlay .card{max-width:380px;width:100%}
-.ranks{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
-.ranks li{display:flex;align-items:center;gap:10px;background:var(--table);border-radius:10px;padding:10px 12px;font-weight:800}
-.ranks .pos{font-family:var(--display);font-size:22px;width:28px;color:var(--accent)}
-.chatbtn{position:relative;display:inline-grid;place-items:center;padding:6px 9px}
-.chatbtn .unread{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:var(--danger);color:#2a1c13;font-size:11px;font-weight:900;display:grid;place-items:center;padding:0 3px}
-.chatsheet{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--plaque);border-top:1px solid var(--plaque-hi);border-radius:16px 16px 0 0;
-  box-shadow:0 -8px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:8px;
-  padding:10px max(14px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-right,0px));
-  max-width:600px;margin:0 auto}
-.chathead{display:flex;justify-content:space-between;align-items:center}
-.chathead .chatturn{flex:1;min-width:0;text-align:right;margin-right:8px;font-size:13px;font-weight:800;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chathead .chatturn b{font-family:var(--body);font-size:13px;color:var(--ink)}
-.chathead b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.02em}
-.chatlist{display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-.chatlist:empty::after{content:attr(data-empty);color:var(--faint);font-size:13px;padding:8px 2px}
-.msg{display:flex;gap:7px;align-items:baseline;background:var(--table);border-radius:10px;padding:7px 9px;min-width:0}
-.msg .dot{width:9px;height:9px;border-radius:50%;background:var(--c,var(--faint));flex:none;align-self:center}
-.msg .who{font-weight:900;font-size:13px;color:var(--muted);flex:none;max-width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.msg .txt{font-size:14px;font-weight:600;min-width:0;overflow-wrap:anywhere}
-.msg.mine{background:color-mix(in srgb,var(--accent) 16%,var(--table))}
-.quickrow{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
-.quickrow::-webkit-scrollbar{display:none}
-.quickrow button{border:0;background:var(--table);border-radius:999px;padding:7px 12px;font-weight:800;font-size:13px;white-space:nowrap;flex:none}
-.quickrow button.emo{font-size:18px;padding:5px 10px;line-height:1.2}
-.chatform{display:flex;gap:8px}
-.chatform input{flex:1;min-width:0}
-.chatform .btn{padding:11px 15px}
-.teamtoggle{position:relative;display:flex;align-items:center;gap:8px;justify-content:center;text-align:left}
-.teamtoggle::before{content:'';width:30px;height:18px;border-radius:9px;background:var(--table);box-shadow:inset 0 0 0 2px var(--plaque-hi);position:relative;flex:none;transition:background .15s}
-.teamtoggle::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--muted);position:absolute;left:13px;top:50%;transform:translateY(-50%);transition:transform .15s,background .15s}
-.teamtoggle[aria-pressed=true]::before{background:var(--accent);box-shadow:none}
-.teamtoggle[aria-pressed=true]::after{transform:translateY(-50%) translateX(12px);background:#3a2300}
-.teamtoggle[disabled]{opacity:.45}
-.tbadge{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:6px;background:var(--table);flex:none}
-.tbadge i{width:9px;height:9px;border-radius:50%;display:block}
-.seathead{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:6px 2px 0}
-.teamblock{background:var(--table);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
-.teamblock.won{box-shadow:inset 0 0 0 2px var(--accent)}
-.teamblock h3{margin:0;font-family:var(--display);font-weight:400;font-size:17px;display:flex;align-items:center;gap:8px}
-.teamblock .mem{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px}
-.sndbtn{display:inline-grid;place-items:center;padding:6px 9px}
-.sndbtn .x{display:none}.sndbtn[aria-pressed=false] .x{display:inline}.sndbtn[aria-pressed=false] .w{display:none}
-.tm{display:flex;align-items:center;gap:6px;width:100%}
-.pl.right .tm{flex-direction:row-reverse}
-.tm .bar{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
-.tm .bar i{display:block;height:100%;width:100%;background:var(--c);transition:width .25s linear}
-.tm .secs{font-size:12px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums;min-width:2.6em}
-.pl.right .tm .secs{text-align:left}
-.tm.warn .bar i{background:var(--danger)}.tm.warn .secs{color:var(--danger)}
-.langrow{display:flex;justify-content:flex-end}
-.netbar{position:fixed;top:0;left:0;right:0;padding:8px max(16px,env(safe-area-inset-left,0px));padding-top:calc(8px + env(safe-area-inset-top,0px));background:#7a2e22;color:#fff;font-weight:800;text-align:center;z-index:40}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--table);padding:10px 16px;border-radius:10px;font-weight:800;z-index:30;box-shadow:0 6px 20px rgba(0,0,0,.4)}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.wrap{max-width:720px;margin:0 auto;padding-block:16px 32px;display:flex;flex-direction:column;gap:18px;min-height:100%;box-sizing:border-box}
+.topline{display:flex;justify-content:flex-end}
+.mini{border:0;background:var(--plaque-hi);border-radius:8px;padding:6px 10px;font:800 13px var(--body);color:var(--ink);cursor:pointer}
+.mini:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.brand{display:flex;flex-direction:column;align-items:center;gap:6px}
+.brand h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,46px);margin:0;letter-spacing:.02em;text-wrap:balance;text-align:center}
+.brand p{margin:0;color:var(--muted);font-size:15px;text-align:center;max-width:46ch;line-height:1.5}
+.games{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:600px){.games{grid-template-columns:1fr}}
+.game{display:flex;flex-direction:column;gap:12px;background:var(--plaque);border:1px solid var(--plaque-hi);border-radius:18px;
+  padding:16px;text-decoration:none;color:inherit;box-shadow:0 4px 0 rgba(0,0,0,.25);transition:transform .12s,box-shadow .12s}
+.game:hover,.game:focus-visible{transform:translateY(-3px);box-shadow:0 7px 0 rgba(0,0,0,.25)}
+.game .art{aspect-ratio:16/10;border-radius:12px;background:var(--table);display:grid;place-items:center;overflow:hidden}
+.game h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0;letter-spacing:.02em}
+.game p{margin:0;color:var(--muted);font-size:14px;line-height:1.45;flex:1}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tags span{font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:var(--table);color:var(--muted)}
+.cta{align-self:flex-start;background:var(--accent);color:#3a2300;border-radius:10px;padding:10px 16px;font-weight:900;font-size:15px}
+.note{color:var(--faint);font-size:13px;line-height:1.5;text-align:center}
+.join{background:var(--plaque);border:1px solid var(--plaque-hi);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.join h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0}
+.join p{margin:0;color:var(--muted);font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+input[type=text]{background:var(--table);border:2px solid var(--plaque-hi);color:var(--ink);border-radius:10px;padding:11px 12px;
+  font:700 16px var(--body);flex:1;min-width:120px;text-transform:uppercase;letter-spacing:.15em;box-sizing:border-box}
+.btn{border:0;border-radius:10px;padding:11px 16px;font:900 15px var(--body);background:var(--accent);color:#3a2300;cursor:pointer}
+.msg{text-align:center;color:var(--muted);font-weight:800;padding:40px 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="wrap">
+  <div class="topline"><button class="mini" id="lang" type="button">EN</button></div>
 
-<!-- ================= MENU ================= -->
-<section id="menu" class="screen" style="display:flex;flex-direction:column;gap:16px">
-  <div class="langrow" style="gap:8px"><button class="mini sndbtn" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini langbtn" type="button">EN</button></div>
   <div class="brand">
-    <div class="word" aria-label="Ludo">
-      <span style="background:var(--red);--r:-6deg">L</span><span style="background:var(--green);--r:4deg">U</span><span style="background:var(--yellow);--r:-3deg;color:#3a2300">D</span><span style="background:var(--blue);--r:7deg">O</span>
-    </div>
-    <small data-i18n="brandSub">Masası</small>
+    <h1 data-i18n="title">Oyun Masası</h1>
+    <p data-i18n="sub">Arkadaşlarınla online oyna. Davet linkini gönder, onlar da adlarını yazıp aynı odaya gelsin.</p>
   </div>
 
-  <div class="card">
-    <label class="fld" for="nick"><span data-i18n="yourName">Oyuncu adın</span>
-      <input type="text" id="nick" maxlength="16" placeholder="Örn. Can" data-i18n-ph="namePh" autocomplete="nickname">
-    </label>
-  </div>
-
-  <div id="joinHint" class="card" hidden style="border-color:var(--accent)">
-    <h2 data-i18n="invited">Davet aldın</h2>
-    <p><span data-i18n="hintA">Oda</span> <b id="hintCode"></b> <span data-i18n="hintB">seni bekliyor. Adını yaz ve katıl.</span></p>
-    <button class="btn go big" id="hintJoin" data-i18n="joinRoom">Odaya katıl</button>
-  </div>
-
-  <div class="modes">
-    <div class="card">
-      <h2 data-i18n="hostTitle">Online oda kur</h2>
-      <p data-i18n="hostDesc">Bir oda aç, davet linkini arkadaşlarına gönder. Boş yerlere bot da koyabilirsin.</p>
-      <button class="btn go big" id="hostBtn" data-i18n="hostBtn">Oda kur</button>
-    </div>
-    <div class="card">
-      <h2 data-i18n="joinTitle">Koda katıl</h2>
-      <p data-i18n="joinDesc">Arkadaşının gönderdiği oda kodunu yaz.</p>
-      <div class="row">
-        <input type="text" id="codeIn" maxlength="6" placeholder="ABCD" style="flex:1;min-width:110px;text-transform:uppercase;letter-spacing:.15em" autocomplete="off">
-        <button class="btn" id="joinBtn" data-i18n="joinBtn">Katıl</button>
+  <div class="games">
+    <a class="game" href="ludo.html">
+      <div class="art">
+        <svg viewBox="0 0 160 100" width="100%" height="100%" aria-hidden="true">
+          <rect x="35" y="10" width="80" height="80" rx="6" fill="#fffaf0"/>
+          <rect x="35" y="10" width="32" height="32" fill="#e0453a"/><rect x="83" y="10" width="32" height="32" fill="#2e9c5c"/>
+          <rect x="35" y="58" width="32" height="32" fill="#2f76d2"/><rect x="83" y="58" width="32" height="32" fill="#efb025"/>
+          <rect x="43" y="18" width="16" height="16" rx="3" fill="#fffaf0"/><rect x="91" y="18" width="16" height="16" rx="3" fill="#fffaf0"/>
+          <rect x="43" y="66" width="16" height="16" rx="3" fill="#fffaf0"/><rect x="91" y="66" width="16" height="16" rx="3" fill="#fffaf0"/>
+          <path d="M67 42h16v16H67z" fill="#efb025"/><path d="M67 42l8 8-8 8z" fill="#e0453a"/><path d="M83 42l-8 8 8 8z" fill="#2e9c5c"/>
+          <rect x="118" y="52" width="30" height="30" rx="6" fill="#fff" transform="rotate(12 133 67)"/>
+          <circle cx="127" cy="62" r="3" fill="#2a1c13"/><circle cx="139" cy="72" r="3" fill="#2a1c13"/><circle cx="133" cy="67" r="3" fill="#2a1c13"/>
+        </svg>
       </div>
-    </div>
-  </div>
+      <h2>Ludo Masası</h2>
+      <p data-i18n="ludoDesc">Klasik Ludo. Zarı at, taşlarını çıkar, rakibini evine yolla. Takımlı 2+2 modu da var.</p>
+      <div class="tags"><span data-i18n="p24">2-4 oyuncu</span><span data-i18n="online">Online</span><span data-i18n="vsBot">Bota karşı</span></div>
+      <span class="cta" data-i18n="play">Oyna</span>
+    </a>
 
-  <div class="modes">
-    <div class="card">
-      <h2 data-i18n="vsBot">Bilgisayara karşı</h2>
-      <div class="row"><span class="note" data-i18n="players">Oyuncu sayısı</span>
-        <div class="seg" id="botN"><button data-n="2" aria-pressed="true">2</button><button data-n="3" aria-pressed="false">3</button><button data-n="4" aria-pressed="false">4</button></div>
+    <a class="game" href="kartlar.html">
+      <div class="art">
+        <svg viewBox="0 0 160 100" width="100%" height="100%" aria-hidden="true">
+          <g transform="rotate(-14 62 55)"><rect x="40" y="18" width="46" height="66" rx="8" fill="#2f76d2" stroke="#fffaf0" stroke-width="4"/>
+            <rect x="46" y="44" width="34" height="15" rx="4" fill="#fffaf0"/></g>
+          <g transform="rotate(-3 80 52)"><rect x="58" y="14" width="46" height="66" rx="8" fill="#2e9c5c" stroke="#fffaf0" stroke-width="4"/>
+            <rect x="64" y="40" width="34" height="15" rx="4" fill="#fffaf0"/></g>
+          <g transform="rotate(10 100 55)"><rect x="76" y="18" width="46" height="66" rx="8" fill="#e0453a" stroke="#fffaf0" stroke-width="4"/>
+            <text x="99" y="60" font-family="Lilita One,sans-serif" font-size="34" fill="#fffaf0" text-anchor="middle">7</text></g>
+        </svg>
       </div>
-      <button class="mini teamtoggle" id="botTeams" type="button" aria-pressed="false" hidden></button>
-      <button class="btn big" id="botBtn" data-i18n="startBtn">Başla</button>
-    </div>
-    <div class="card">
-      <h2 data-i18n="sameDev">Aynı cihazda</h2>
-      <div class="row"><span class="note" data-i18n="players">Oyuncu sayısı</span>
-        <div class="seg" id="hotN"><button data-n="2" aria-pressed="true">2</button><button data-n="3" aria-pressed="false">3</button><button data-n="4" aria-pressed="false">4</button></div>
-      </div>
-      <button class="mini teamtoggle" id="hotTeams" type="button" aria-pressed="false" hidden></button>
-      <button class="btn big" id="hotBtn" data-i18n="startBtn">Başla</button>
-    </div>
+      <h2>Son Kart</h2>
+      <p data-i18n="cardsDesc">Renk ya da sayı tuttur, kartlarını bitir. Atla, ters çevir, +2 ve joker kartlar var. Son kartına düşünce bağırmayı unutma.</p>
+      <div class="tags"><span data-i18n="p24">2-4 oyuncu</span><span data-i18n="online">Online</span><span data-i18n="vsBot">Bota karşı</span></div>
+      <span class="cta" data-i18n="play">Oyna</span>
+    </a>
   </div>
-  <p class="note" data-i18n="rules">Kurallar: Taşı çıkarmak için 6 at. 6 atınca tekrar atarsın, üst üste üç 6 sırayı yakar. Rakibin üstüne gelirsen onu evine yollar ve bir zar daha atarsın. Yıldızlı ve renkli başlangıç kareleri güvenlidir. Dört taşını da merkeze ilk sokan kazanır.</p>
-</section>
 
-<!-- ================= LOBBY ================= -->
-<section id="lobby" class="screen" hidden style="display:flex;flex-direction:column;gap:16px">
-  <div class="topbar"><button class="mini" id="lobbyBack" data-i18n="back">← Ana menü</button><span class="row" style="gap:8px"><span class="roomtag" id="lobbyRole"></span><button class="mini chatbtn" type="button" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3 1-5a8 8 0 1 1 17-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span class="unread" hidden></span></button><button class="mini sndbtn" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini langbtn" type="button">EN</button></span></div>
-  <div class="card" style="align-items:center;text-align:center">
-    <p data-i18n="roomCode">Oda kodu</p>
-    <div class="code" id="lobbyCode">····</div>
-    <div class="row" style="justify-content:center">
-      <button class="btn go" id="copyInvite" data-i18n="copyInvite">Davet linkini kopyala</button>
-      <a class="btn" id="waShare" target="_blank" rel="noopener" style="text-decoration:none;background:#25a35a;color:#fff" data-i18n="waShare">WhatsApp'ta paylaş</a>
+  <div class="join">
+    <h2 data-i18n="joinTitle">Oda koduyla katıl</h2>
+    <p data-i18n="joinDesc">Arkadaşının gönderdiği kodu yaz; hangi oyun olduğunu kendimiz buluruz.</p>
+    <div class="row">
+      <input type="text" id="code" maxlength="6" placeholder="ABCD" autocomplete="off">
+      <button class="btn" id="go" type="button" data-i18n="joinBtn">Katıl</button>
     </div>
-    <p class="note" id="inviteLink" style="word-break:break-all"></p>
+    <p class="note" id="joinMsg"></p>
   </div>
-  <div class="card">
-    <h2 data-i18n="playersTitle">Oyuncular</h2>
-    <div class="row" id="teamRow" style="justify-content:space-between"><span class="note" id="teamLabel"></span><button class="mini teamtoggle" id="teamBtn" type="button" aria-pressed="false"></button></div>
-    <div class="seats" id="seatList"></div>
-    <p class="note" id="lobbyMsg"></p>
-    <button class="btn go big" id="startBtn" hidden data-i18n="startGame">Oyunu başlat</button>
-  </div>
-</section>
 
-<!-- ================= GAME ================= -->
-<section id="game" class="screen game" hidden>
-  <div class="topbar" style="max-width:600px"><button class="mini" id="gameBack" data-i18n="back">← Ana menü</button><span class="row" style="gap:8px"><span class="roomtag" id="gameRoom"></span><button class="mini chatbtn" type="button" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3 1-5a8 8 0 1 1 17-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span class="unread" hidden></span></button><button class="mini sndbtn" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="mini langbtn" type="button">EN</button></span></div>
-  <div class="prow"><div class="pl" data-c="red"></div><div class="pl right" data-c="green"></div></div>
-  <div class="board" id="board"></div>
-  <div class="prow"><div class="pl" data-c="blue"></div><div class="pl right" data-c="yellow"></div></div>
-  <div class="status" id="status" aria-live="polite"></div>
-</section>
+  <p class="note" data-i18n="foot">Hesap açmana gerek yok. Oyunlar telefonda ve bilgisayarda çalışır.</p>
 </div>
 
-<div class="overlay" id="over" hidden>
-  <div class="card">
-    <h2 data-i18n="gameOver">Oyun bitti</h2>
-    <ol class="ranks" id="rankList"></ol>
-    <div class="row"><button class="btn go" id="againBtn" data-i18n="again">Tekrar oyna</button><button class="btn" id="overMenu" data-i18n="menu">Ana menü</button></div>
-    <p class="note" id="overNote" hidden data-i18n="hostRestarts">Yeni oyunu oda kurucusu başlatır.</p>
-  </div>
-</div>
-<div class="netbar" id="netbar" hidden data-i18n="reconnecting">Bağlantı koptu, yeniden bağlanılıyor…</div>
-<div class="chatsheet" id="chatPanel" hidden>
-  <div class="chathead"><b id="chatTitle"></b><span class="chatturn" id="chatTurn" hidden></span><button class="mini" id="chatClose" aria-label="Kapat">✕</button></div>
-  <div class="chatlist" id="chatList"></div>
-  <div class="quickrow" id="quickRow"></div>
-  <form class="chatform" id="chatForm">
-    <input type="text" id="chatIn" maxlength="140" autocomplete="off">
-    <button class="btn go" id="chatSend" type="submit" aria-label="Gönder">➤</button>
-  </form>
-</div>
-<div class="toast" id="toast" hidden></div>
+<div class="msg" id="redir" hidden></div>
 
-<script src="engine.js"></script>
 <script>
-const {TEAM_OF,MATE,armTimer,timeoutStep,TURN_MS,COLORS,SEAT_ORDER,NAME,TRACK,OFF,HOME,SAFE,rnd,nk,gIdx,newState,startGame,legal,applyAct,botStep}=window.LudoEngine;
-const QUAD={red:[0,0],green:[9,0],yellow:[9,9],blue:[0,9]};
-const FIN={red:[6.55,7.5],green:[7.5,6.55],yellow:[8.45,7.5],blue:[7.5,8.45]};
-const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
-
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const clone=o=>JSON.parse(JSON.stringify(o));
-const cleanNick=v=>String(v||'').replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁯﻿]/g,'').trim().slice(0,16);
-function store(k,v){try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null}}
-function getPid(){let p=null;try{p=sessionStorage.getItem('ludo-pid')}catch(e){} if(!p){p='p'+Date.now().toString(36)+rnd(1e9).toString(36);try{sessionStorage.setItem('ludo-pid',p)}catch(e){}} return p}
-const PID=getPid();
-
-
-/* ================= dil ================= */
 const I18N={
- tr:{brandSub:'Masası',yourName:'Oyuncu adın',namePh:'Örn. Can',invited:'Davet aldın',hintA:'Oda',hintB:'seni bekliyor. Adını yaz ve katıl.',joinRoom:'Odaya katıl',
-  hostTitle:'Online oda kur',hostDesc:'Bir oda aç, davet linkini arkadaşlarına gönder. Boş yerlere bot da koyabilirsin.',hostBtn:'Oda kur',
-  joinTitle:'Koda katıl',joinDesc:'Arkadaşının gönderdiği oda kodunu yaz.',joinBtn:'Katıl',vsBot:'Bilgisayara karşı',sameDev:'Aynı cihazda',players:'Oyuncu sayısı',startBtn:'Başla',
-  rules:'Kurallar: Taşı çıkarmak için 6 at. 6 atınca tekrar atarsın, üst üste üç 6 sırayı yakar. Rakibin üstüne gelirsen onu evine yollar ve bir zar daha atarsın. Yıldızlı ve renkli başlangıç kareleri güvenlidir. Dört taşını da merkeze ilk sokan kazanır. 4 kişilik oyunda takımlı modu açarsan karşılıklı oturanlar eş olur ve iki taşını da eve sokan takım kazanır. Her hamle için 20 saniyen var; süre dolarsa hamle otomatik yapılır.',
-  back:'← Ana menü',roomCode:'Oda kodu',copyInvite:'Davet linkini kopyala',waShare:"WhatsApp'ta paylaş",playersTitle:'Oyuncular',startGame:'Oyunu başlat',
-  gameOver:'Oyun bitti',again:'Tekrar oyna',menu:'Ana menü',hostRestarts:'Yeni oyunu oda kurucusu başlatır.',reconnecting:'Bağlantı koptu, yeniden bağlanılıyor…',timeout:n=>`${n} için süre doldu, hamle otomatik yapıldı.`,
-  chat:'Sohbet',chatPh:'Mesaj yaz…',chatEmpty:'Henüz mesaj yok. İlk yazan sen ol.',chatClosed:'Sohbet yalnızca online odalarda çalışır.',guest:'İzleyici',
-  quick:['İyi oyun!','Aferin!','Acele et 🙂','Vay be!','Tekrar oynayalım','Az kaldı!'],
-  teamMode:'Takımlı oyun (2+2)',teamNeed4:'Takımlı oyun için 4 oyuncu gerekli.',teamOn:'Karşılıklı oturanlar takım arkadaşı. Arkadaşını kıramazsın.',
-  teamOff:'Herkes kendi için oynuyor.',teamHostOnly:'Takım modunu oda kurucusu açar.',teamLabel:t=>`${t} takımı`,teamWon:'Kazandı',teamAnd:' + ',secs:n=>`${n} sn`,mute:'Sesi kapat',unmute:'Sesi aç',
-  col:{red:'Kırmızı',green:'Yeşil',yellow:'Sarı',blue:'Mavi'},bot:'Bot',you:'Sen',offline:'Çevrimdışı',place:n=>`${n}. oldu`,inHome:n=>`${n}/4 içeride`,
-  piece:(c,i)=>`${c} taş ${i}`,rollDie:'Zar at',die:'Zar',
-  yourRoll:'Sıra sende, zarı at.',pickPiece:'Oynatacağın taşa dokun.',turnOf:n=>`Sıra: ${n}`,room:c=>`Oda ${c}`,
-  isHost:'Oda kurucusu sensin',joined:'Odaya katıldın',empty:'Boş yer',addBot:'Bot ekle',remove:'Çıkar',
-  connecting:'Odaya bağlanılıyor…',need2:'Başlamak için en az 2 oyuncu gerekli. Arkadaşını bekle ya da bot ekle.',ready:n=>`${n} oyuncu hazır.`,
-  waitHost:'Oda kurucusunun oyunu başlatması bekleniyor.',full:'Oda dolu. Oyun başlayınca izleyici olarak bakabilirsin.',
-  nameFirst:'Önce adını yaz.',code4:'Oda kodu 4 karakter olmalı.',inviteText:l=>`Ludo oynayalım! Odaya gel: ${l}`,copied:'Davet linki kopyalandı.',
-  err:{no_room:'Bu kodla bir oda bulunamadı. Kodu kontrol et ya da yeni oda kur.',conn:'Bağlantı kurulamadı, sayfayı yenile.'},
-  m:{winTeam:v=>`${v.t} kazandı!`,start:v=>`Oyun başladı. İlk sıra ${v.n}.`,three6:v=>`${v.n} üst üste üç 6 attı, sıra geçti.`,nomove:v=>`${v.n} ${v.d} attı, oynayacak taş yok.`,
-     rolled:v=>`${v.n} ${v.d} attı.`,cap:v=>`${v.n} rakip taşı evine yolladı! Bir zar daha.`,fin:v=>`${v.n} bir taşını merkeze soktu!`,
-     done:v=>`${v.n} bütün taşlarını soktu! ${v.r}. oldu.`,win:v=>`${v.n} kazandı!`}},
- en:{brandSub:'Table',yourName:'Your name',namePh:'e.g. Alex',invited:"You're invited",hintA:'Room',hintB:'is waiting for you. Enter your name and join.',joinRoom:'Join room',
-  hostTitle:'Host an online room',hostDesc:'Open a room and send the invite link to your friends. You can fill empty seats with bots.',hostBtn:'Host room',
-  joinTitle:'Join with a code',joinDesc:'Enter the room code your friend sent you.',joinBtn:'Join',vsBot:'Play vs computer',sameDev:'Same device',players:'Players',startBtn:'Start',
-  rules:'Rules: Roll a 6 to bring a piece out. A 6 gives you another roll, but three 6s in a row ends your turn. Land on an opponent to send it home and roll again. Star squares and colored start squares are safe. First to bring all four pieces home wins. In a 4-player game you can turn on team play: players sitting opposite become partners and the first team to bring both players home wins. You have 20 seconds per move; when time runs out, the move is made for you.',
-  back:'← Main menu',roomCode:'Room code',copyInvite:'Copy invite link',waShare:'Share on WhatsApp',playersTitle:'Players',startGame:'Start game',
-  gameOver:'Game over',again:'Play again',menu:'Main menu',hostRestarts:'The host starts the next game.',reconnecting:'Connection lost, reconnecting…',timeout:n=>`${n} ran out of time, the move was made automatically.`,
-  chat:'Chat',chatPh:'Write a message…',chatEmpty:'No messages yet. Say hi.',chatClosed:'Chat only works in online rooms.',guest:'Spectator',
-  quick:['Good game!','Nice one!','Hurry up 🙂','Wow!','Let us play again','So close!'],
-  teamMode:'Team play (2v2)',teamNeed4:'Team play needs 4 players.',teamOn:'Players sitting opposite are partners. You cannot capture your partner.',
-  teamOff:'Everyone plays for themselves.',teamHostOnly:'Only the host can turn on team play.',teamLabel:t=>`Team ${t}`,teamWon:'Winner',teamAnd:' + ',secs:n=>`${n}s`,mute:'Mute sound',unmute:'Turn sound on',
-  col:{red:'Red',green:'Green',yellow:'Yellow',blue:'Blue'},bot:'Bot',you:'You',offline:'Offline',place:n=>['1st','2nd','3rd','4th'][n-1]+' place',inHome:n=>`${n}/4 home`,
-  piece:(c,i)=>`${c} piece ${i}`,rollDie:'Roll the die',die:'Die',
-  yourRoll:'Your turn, roll the die.',pickPiece:'Tap the piece you want to move.',turnOf:n=>`Turn: ${n}`,room:c=>`Room ${c}`,
-  isHost:"You're the host",joined:'You joined the room',empty:'Empty seat',addBot:'Add bot',remove:'Remove',
-  connecting:'Connecting to the room…',need2:'You need at least 2 players to start. Wait for a friend or add a bot.',ready:n=>`${n} players ready.`,
-  waitHost:'Waiting for the host to start the game.',full:'The room is full. You can watch once the game starts.',
-  nameFirst:'Enter your name first.',code4:'Room codes are 4 characters.',inviteText:l=>`Let's play Ludo! Join my room: ${l}`,copied:'Invite link copied.',
-  err:{no_room:'No room found with that code. Check the code or host a new room.',conn:"Couldn't connect. Refresh the page."},
-  m:{winTeam:v=>`${v.t} wins!`,start:v=>`Game started. ${v.n} goes first.`,three6:v=>`${v.n} rolled three 6s in a row and loses the turn.`,nomove:v=>`${v.n} rolled ${v.d}, no piece can move.`,
-     rolled:v=>`${v.n} rolled ${v.d}.`,cap:v=>`${v.n} sent a piece home! Roll again.`,fin:v=>`${v.n} brought a piece home!`,
-     done:v=>`${v.n} finished all pieces! ${['1st','2nd','3rd','4th'][v.r-1]} place.`,win:v=>`${v.n} wins!`}}
+ tr:{title:'Oyun Masası',sub:'Arkadaşlarınla online oyna. Davet linkini gönder, onlar da adlarını yazıp aynı odaya gelsin.',
+  ludoDesc:'Klasik Ludo. Zarı at, taşlarını çıkar, rakibini evine yolla. Takımlı 2+2 modu da var.',
+  cardsDesc:'Renk ya da sayı tuttur, kartlarını bitir. Atla, ters çevir, +2 ve joker kartlar var. Son kartına düşünce bağırmayı unutma.',
+  p24:'2-4 oyuncu',online:'Online',vsBot:'Bota karşı',play:'Oyna',
+  joinTitle:'Oda koduyla katıl',joinDesc:'Arkadaşının gönderdiği kodu yaz; hangi oyun olduğunu kendimiz buluruz.',joinBtn:'Katıl',
+  foot:'Hesap açmana gerek yok. Oyunlar telefonda ve bilgisayarda çalışır.',
+  looking:'Oda aranıyor…',noRoom:'Bu kodla açık bir oda bulunamadı. Kodu kontrol et ya da yeni oda kur.',short:'Oda kodu 4 karakter olmalı.'},
+ en:{title:'Game Table',sub:'Play online with your friends. Send them the invite link, they enter a name and join your room.',
+  ludoDesc:'Classic Ludo. Roll the die, bring your pieces out, send opponents home. Team 2v2 mode included.',
+  cardsDesc:'Match the color or the number and empty your hand. Skip, reverse, +2 and wild cards. Call it when you are down to one.',
+  p24:'2-4 players',online:'Online',vsBot:'vs computer',play:'Play',
+  joinTitle:'Join with a room code',joinDesc:'Enter the code your friend sent you; we will find the right game.',joinBtn:'Join',
+  foot:'No account needed. Works on phones and computers.',
+  looking:'Looking for the room…',noRoom:'No room found with that code. Check the code or host a new one.',short:'Room codes are 4 characters.'}
 };
-let LANG=(store('ludo-lang')||((navigator.language||'').toLowerCase().startsWith('tr')?'tr':'en'));
-if(!I18N[LANG]) LANG='en';
+function store(k,v){try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null}}
+let LANG=store('ludo-lang')||((navigator.language||'').toLowerCase().startsWith('tr')?'tr':'en');
+if(!I18N[LANG])LANG='en';
 const T=k=>I18N[LANG][k];
-/** Koltuktaki oyuncunun ekranda görünen adı (botlar ve isimsizler renk adıyla). */
-function nameOf(c){const se=S&&S.seats[c];if(!se)return T('col')[c];if(se.bot)return `${T('bot')} ${T('col')[c]}`;return se.nick||T('col')[c]}
-/** Takımın oyuncu adlarıyla yazılmış adı: "Can + Ayşe". */
-function teamName(t){return COLORS.filter(c=>TEAM_OF(c)===t&&S.seats[c]).map(nameOf).join(T('teamAnd'))}
-/** Takımın iki rengini gösteren küçük rozet. */
-function teamBadge(t){const b=document.createElement('span');b.className='tbadge';
-  COLORS.filter(c=>TEAM_OF(c)===t).forEach(c=>{const i=document.createElement('i');i.style.background=`var(--${c})`;b.appendChild(i)});return b}
-function fmtMsg(m){if(!m||typeof m!=='object'||!COLORS.includes(m.c))return '';const f=T('m')[m.k];if(!f)return '';
-  return f({n:nameOf(m.c),t:S.teams?teamName(TEAM_OF(m.c)):nameOf(m.c),d:Number(m.d)||0,r:Math.min(4,Math.max(1,Number(m.r)||1))})}
+const $=s=>document.querySelector(s);
 function applyLang(){
   document.documentElement.lang=LANG;
-  $$('[data-i18n]').forEach(el=>{const v=T(el.dataset.i18n);if(typeof v==='string')el.textContent=v});
-  $$('[data-i18n-ph]').forEach(el=>el.placeholder=T(el.dataset.i18nPh));
-  $$('#botTeams,#hotTeams').forEach(b=>b.textContent=T('teamMode'));
-  $('#chatTitle').textContent=T('chat'); $('#chatIn').placeholder=T('chatPh');
-  renderQuick(); renderChat(); updateChatBtn();
-  $$('.sndbtn').forEach(b=>{b.setAttribute('aria-pressed',SND.on);b.setAttribute('aria-label',SND.on?T('mute'):T('unmute'))});
-  $$('.langbtn').forEach(b=>{b.textContent=LANG==='tr'?'EN':'TR';b.setAttribute('aria-label',LANG==='tr'?'Switch to English':'Türkçeye geç')});
-  COLORS.forEach(c=>pcEl[c]&&pcEl[c].forEach((b,i)=>b.setAttribute('aria-label',T('piece')(T('col')[c],i+1))));
-  if(mode!==null) render();
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=T(el.dataset.i18n);if(v)el.textContent=v});
+  $('#lang').textContent=LANG==='tr'?'EN':'TR';
+  $('#lang').setAttribute('aria-label',LANG==='tr'?'Switch to English':'Türkçeye geç');
+  document.title=T('title');
 }
+$('#lang').onclick=()=>{LANG=LANG==='tr'?'en':'tr';store('ludo-lang',LANG);applyLang()};
+const PAGE={ludo:'ludo.html',cards:'kartlar.html'};
+/** Oda kodunun hangi oyuna ait olduğunu sunucuya sorar. */
+async function lookup(code){
+  try{const r=await fetch('api/room?code='+encodeURIComponent(code),{cache:'no-store'});
+    if(!r.ok)return null; const j=await r.json(); return j&&j.game?j.game:null}catch(e){return null}
+}
+async function goJoin(code){
+  code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+  if(code.length<4){$('#joinMsg').textContent=T('short');return}
+  $('#joinMsg').textContent=T('looking');
+  const g=await lookup(code);
+  if(!g){$('#joinMsg').textContent=T('noRoom');return}
+  location.href=PAGE[g]+'?oda='+code;
+}
+$('#go').onclick=()=>goJoin($('#code').value);
+$('#code').addEventListener('keydown',e=>{if(e.key==='Enter')goJoin(e.target.value)});
 
-
-/* ================= ses (tarayıcıda üretilir, dosya gerekmez) ================= */
-const SND={ctx:null,on:store('ludo-sound')!=='off'};
-function ac(){try{if(!SND.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;SND.ctx=new C()}
-  if(SND.ctx.state==='suspended')SND.ctx.resume();return SND.ctx}catch(e){return null}}
-document.addEventListener('pointerdown',()=>{if(SND.on)ac()},{passive:true});
-function tone(f,dur,o={}){if(!SND.on)return;const c=ac();if(!c)return;const t=c.currentTime+(o.at||0),vol=o.vol||.15;
-  const os=c.createOscillator(),g=c.createGain();os.type=o.type||'sine';os.frequency.setValueAtTime(f,t);
-  if(o.slide)os.frequency.exponentialRampToValueAtTime(Math.max(40,f+o.slide),t+dur);
-  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  os.connect(g);g.connect(c.destination);os.start(t);os.stop(t+dur+.03)}
-function noise(dur,o={}){if(!SND.on)return;const c=ac();if(!c)return;const t=c.currentTime+(o.at||0);
-  const b=c.createBuffer(1,Math.ceil(c.sampleRate*dur),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
-  const src=c.createBufferSource();src.buffer=b;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=o.hz||2500;f.Q.value=1.2;
-  const g=c.createGain();g.gain.value=o.vol||.3;src.connect(f);f.connect(g);g.connect(c.destination);src.start(t)}
-const sfx={
-  roll(){for(let k=0;k<6;k++)noise(.045,{at:k*.068+Math.random()*.02,vol:.35,hz:1800+Math.random()*1800})},
-  six(){tone(1046,.16,{vol:.1,at:.5});tone(1568,.24,{vol:.09,at:.58})},
-  step(){tone(700,.05,{type:'triangle',vol:.1})},
-  cap(){tone(420,.28,{type:'sawtooth',vol:.08,slide:-280});noise(.14,{vol:.35,hz:500})},
-  home(){[523,659,784,1046].forEach((f,i)=>tone(f,.18,{type:'triangle',vol:.11,at:i*.08}))},
-  turn(){tone(784,.12,{vol:.11});tone(1175,.2,{vol:.1,at:.12})},
-  tick(){tone(1250,.035,{type:'square',vol:.04})},
-  timeout(){tone(260,.32,{type:'square',vol:.06,slide:-80})},
-  msg(){tone(880,.07,{vol:.07});tone(1245,.1,{vol:.06,at:.06})},
-  win(){[523,659,784,1046,784,1046,1318].forEach((f,i)=>tone(f,.24,{type:'triangle',vol:.12,at:i*.12}))},
-  lose(){[440,392,349,294].forEach((f,i)=>tone(f,.3,{type:'triangle',vol:.09,at:i*.2}))}
-};
-
-
-/* ================= sohbet ================= */
-const EMO=['👍','😂','😮','😢','🔥','🎲'];
-function chatAvailable(){return mode==='online'}
-function renderChat(){
-  const list=$('#chatList'); list.dataset.empty=T('chatEmpty');
-  const near=list.scrollHeight-list.scrollTop-list.clientHeight<40;
-  list.textContent='';
-  chatItems.forEach(it=>{const d=document.createElement('div');d.className='msg'+(it.pid===PID?' mine':'');
-    if(it.c)d.style.setProperty('--c',`var(--${it.c})`);
-    const dot=document.createElement('span');dot.className='dot';
-    const who=document.createElement('span');who.className='who';who.textContent=(it.nick||(it.c?T('col')[it.c]:T('guest')))+':';
-    const tx=document.createElement('span');tx.className='txt';tx.textContent=it.text;
-    d.append(dot,who,tx);list.appendChild(d)});
-  if(near||chatOpen) list.scrollTop=list.scrollHeight;
-}
-function renderQuick(){
-  const row=$('#quickRow'); row.textContent='';
-  EMO.forEach(e=>{const b=document.createElement('button');b.type='button';b.className='emo';b.textContent=e;b.onclick=()=>sendChat(e);row.appendChild(b)});
-  T('quick').forEach(q=>{const b=document.createElement('button');b.type='button';b.textContent=q;b.onclick=()=>sendChat(q);row.appendChild(b)});
-}
-function setChat(open){
-  chatOpen=open&&chatAvailable(); $('#chatPanel').hidden=!chatOpen;
-  if(chatOpen){unread=0;renderChat();$('#chatList').scrollTop=$('#chatList').scrollHeight}
-  chatTurnLine();
-  updateChatBtn();
-}
-function updateChatBtn(){
-  const on=chatAvailable();
-  $$('.chatbtn').forEach(b=>{b.hidden=!on;b.setAttribute('aria-label',T('chat'));
-    const u=b.querySelector('.unread');u.hidden=!unread||chatOpen;u.textContent=unread>9?'9+':unread});
-  if(!on&&chatOpen) setChat(false);
-}
-/* Sunucu aynı kişiden 600 ms'den sık mesaj kabul etmez; kuyruk sayesinde
-   hızlı art arda yazılanlar düşmek yerine sırayla gönderilir. */
-let sendQ=[], sendT=null, lastSent=0;
-function flushChat(){
-  if(sendT||!sendQ.length)return;
-  sendT=setTimeout(()=>{sendT=null;const t=sendQ.shift();
-    if(t&&chatAvailable()){lastSent=Date.now();net({t:'chat',text:t,nick})}
-    flushChat()},Math.max(0,700-(Date.now()-lastSent)));
-}
-function sendChat(text){
-  if(!chatAvailable())return;
-  const t=String(text||'').replace(/\s+/g,' ').trim().slice(0,140); if(!t)return;
-  $('#chatIn').value='';
-  if(sendQ.length>=4)return;            // aşırı yığılmayı engelle
-  sendQ.push(t); flushChat();
-}
-function onChat(item){
-  if(!item||typeof item.text!=='string')return;
-  chatItems.push(item); if(chatItems.length>60)chatItems.shift();
-  const mine=item.pid===PID;
-  if(!mine){sfx.msg(); if(!chatOpen){unread++; toast(`${item.nick||T('guest')}: ${item.text}`.slice(0,70))}}
-  if(chatOpen)renderChat(); updateChatBtn();
-}
-function clearChat(){chatItems=[];unread=0;sendQ=[];clearTimeout(sendT);sendT=null;setChat(false);renderChat()}
-
-/* ================= app state ================= */
-let chatItems=[], unread=0, chatOpen=false;
-let mode=null;          // 'local' | 'online'
-let S=null;             // şu anki oyun durumu
-let CODE=null, want=null, ws=null, waiting=false, botT=null, retry=0;
-let nick=cleanNick(store('ludo-nick')||'');
-const isHost=()=>mode==='online'&&S&&S.hostPid===PID;
-
-/* ================= board ================= */
-const board=$('#board'); const pcEl={};
-(function build(){
-  const add=(cls,x,y,c,txt)=>{const d=document.createElement('div');d.className=cls;d.style.left=(x/15*100)+'%';d.style.top=(y/15*100)+'%';if(c)d.style.setProperty('--c',`var(--${c})`);if(txt)d.textContent=txt;board.appendChild(d);return d};
-  COLORS.forEach(c=>{const [x,y]=QUAD[c];const q=add('quad',x,y,c);const yd=document.createElement('div');yd.className='yard';q.appendChild(yd);
-    [[1/3,1/3],[2/3,1/3],[1/3,2/3],[2/3,2/3]].forEach(([a,b])=>{const s=document.createElement('div');s.className='spot';s.style.left=a*100+'%';s.style.top=b*100+'%';yd.appendChild(s)})});
-  const startOf={0:'red',13:'green',26:'yellow',39:'blue'};
-  TRACK.forEach(([x,y],i)=>{const sc=startOf[i]; if(sc) add('cell col',x,y,sc,'★'); else add('cell',x,y,null,SAFE.has(i)?'★':'')});
-  COLORS.forEach(c=>HOME[c].forEach(([x,y])=>add('cell col',x,y,c)));
-  add('center',6,6);
-  COLORS.forEach(c=>{pcEl[c]=[];for(let i=0;i<4;i++){const b=document.createElement('button');b.className='pc';b.style.setProperty('--c',`var(--${c})`);
-    b.onclick=()=>{if(b.classList.contains('can')) act({t:'move',i})}; board.appendChild(b); pcEl[c].push(b)}});
+// Davet linkiyle gelindiyse doğru oyuna yönlendir. Eski linkler (?oda=) Ludo'ydu.
+(async function(){
+  const code=(new URLSearchParams(location.search).get('oda')||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length<4){applyLang();return}
+  $('#wrap').hidden=true; $('#redir').hidden=false; $('#redir').textContent=T('looking');
+  const g=await lookup(code);
+  location.replace((PAGE[g]||PAGE.ludo)+'?oda='+code);
 })();
-function baseSpot(c,i){const [x,y]=QUAD[c];return [x+(i%2?4:2),y+(i<2?2:4)]}
-function posXY(c,p,i){
-  if(p<0) return baseSpot(c,i);
-  if(p<=50){const [x,y]=TRACK[gIdx(c,p)];return [x+.5,y+.5]}
-  if(p<=55){const [x,y]=HOME[c][p-51];return [x+.5,y+.5]}
-  const [fx,fy]=FIN[c],j=(i-1.5)*.32; return c==='red'||c==='yellow'?[fx,fy+j]:[fx+j,fy];
-}
-
-/* ================= rendering ================= */
-let shown=null, shownGame=-1, shownRoll=0, animTok=0, rollingUntil=0, overT=null, clockOff=0, seenKey=null, sndLast=null, sndTurn=null, sndOver=null, sndTo=null, tickSec=null;
-function show(id){$$('.screen').forEach(s=>s.hidden=s.id!==id)}
-function layoutPieces(){
-  if(!S) return; const groups={};
-  COLORS.forEach(c=>{const on=!!S.seats[c]; pcEl[c].forEach((el,i)=>{el.hidden=!on; if(!on) return; const p=shown[c][i]; const [x,y]=posXY(c,p,i);
-    el.dataset.x=x;el.dataset.y=y; if(p>=0&&p<56){const k=x+','+y;(groups[k]=groups[k]||[]).push(el)} else {el.style.left=x/15*100+'%';el.style.top=y/15*100+'%';el.style.setProperty('--k',p===56?.62:1)}})});
-  const offs={1:[[0,0]],2:[[-.18,0],[.18,0]],3:[[-.2,-.12],[.2,-.12],[0,.16]],4:[[-.18,-.18],[.18,-.18],[-.18,.18],[.18,.18]]};
-  Object.values(groups).forEach(g=>{const n=Math.min(g.length,4),o=offs[n]||offs[4];g.forEach((el,k)=>{const [dx,dy]=o[k%4];el.style.left=(+el.dataset.x+(n>1?dx:0))/15*100+'%';el.style.top=(+el.dataset.y+(n>1?dy:0))/15*100+'%';el.style.setProperty('--k',n>1?.72:1)})});
-}
-function syncPieces(){
-  const tok=++animTok;
-  if(!shown||shownGame!==S.game){shown=clone(S.pcs);shownGame=S.game;layoutPieces();return}
-  const steps=[],snaps=[];
-  COLORS.forEach(c=>S.pcs[c].forEach((to,i)=>{const fr=shown[c][i];if(fr===to)return;
-    if((fr===-1&&to===0)||(to>fr&&to-fr<=6&&fr>=0)) steps.push({c,i,fr,to}); else snaps.push({c,i,to})}));
-  const delay=Math.max(0,rollingUntil-Date.now());
-  const run=()=>{ if(tok!==animTok) return;
-    const seq=[];steps.forEach(m=>{if(m.fr<0)seq.push([m.c,m.i,0]);else for(let p=m.fr+1;p<=m.to;p++)seq.push([m.c,m.i,p])});
-    let k=0;const tick=()=>{ if(tok!==animTok) return;
-      if(k<seq.length){const [c,i,p]=seq[k++];shown[c][i]=p;layoutPieces();sfx.step();setTimeout(tick,125);return}
-      snaps.forEach(m=>shown[m.c][m.i]=m.to); layoutPieces(); renderControls(); moveSounds(); };
-    tick(); };
-  if(steps.length||snaps.length){ if(delay) setTimeout(run,delay); else run(); }
-}
-function setDie(el,d){[...el.children].forEach((p,k)=>p.className=d&&PIPS[d].includes(k)?'on':'')}
-function canControl(){if(!S||S.phase!=='play')return false;const se=S.seats[S.turn];return !!se&&!se.bot&&se.pid===PID&&!se.off}
-function animIdle(){if(!shown)return true;return COLORS.every(c=>S.pcs[c].every((p,i)=>shown[c][i]===p))}
-function renderPanels(){
-  $$('.pl').forEach(pl=>{const c=pl.dataset.c,se=S.seats[c];pl.style.setProperty('--c',`var(--${c})`);
-    if(!pl.firstChild){pl.innerHTML='<button class="die" aria-label="Zar at"></button><div class="who"><div class="nm"></div><div class="sub"></div><div class="tm" hidden><div class="bar"><i></i></div><span class="secs"></span></div></div>';
-      const dd=pl.querySelector('.die');for(let k=0;k<9;k++)dd.appendChild(document.createElement('i'));dd.onclick=()=>{if(dd.classList.contains('mine'))act({t:'roll'})}}
-    pl.classList.toggle('ghost',!se);if(!se)return;
-    pl.classList.toggle('turn',S.phase==='play'&&S.turn===c);
-    pl.querySelector('.nm').textContent=nameOf(c);
-    const sub=pl.querySelector('.sub');sub.textContent='';
-    const tag=(t,cl)=>{const s=document.createElement('span');s.className='tag'+(cl?' '+cl:'');s.textContent=t;sub.appendChild(s)};
-    if(se.pid===PID&&!se.bot&&mode==='online') tag(T('you'),'me');
-    if(S.teams) sub.appendChild(teamBadge(TEAM_OF(c)));
-    if(se.bot) tag(T('bot')); if(se.off) tag(T('offline'),'off');
-    const r=S.ranks.indexOf(c); if(r>=0) tag(T('place')(r+1),'me');
-    else{const home=S.pcs[c].filter(p=>p===56).length; if(home) tag(T('inHome')(home))}
-  });
-}
-function renderControls(){
-  if(!S||mode===null) return;
-  const myTurn=canControl(), rolling=Date.now()<rollingUntil;
-  $$('.pl').forEach(pl=>{const c=pl.dataset.c,dd=pl.querySelector('.die');if(!dd||dd.classList.contains('rolling'))return;
-    const active=S.phase==='play'&&S.turn===c;
-    let face=null; if(active&&S.dice!=null) face=S.dice; else if(S.lastRoll&&S.lastRoll.c===c) face=S.lastRoll.d;
-    setDie(dd,face); dd.classList.toggle('blank',!face); dd.classList.toggle('live',active);
-    const mine=active&&myTurn&&S.dice==null&&!waiting&&!rolling;
-    dd.classList.toggle('mine',mine); dd.disabled=!mine; dd.setAttribute('aria-label',mine?T('rollDie'):T('die'));
-  });
-  const can=new Set(); if(myTurn&&S.dice!=null&&!waiting&&!rolling&&animIdle()) legal(S,S.turn,S.dice).forEach(i=>can.add(i));
-  COLORS.forEach(c=>pcEl[c].forEach((el,i)=>el.classList.toggle('can',c===S.turn&&can.has(i))));
-  const st=$('#status');st.textContent='';
-  if(S.phase==='play'){const se=S.seats[S.turn];
-    const lead=document.createElement('span');const mt=fmtMsg(S.msg);lead.textContent=mt?mt+' ':'';st.appendChild(lead);
-    const b=document.createElement('b');
-    b.textContent=myTurn?(S.dice==null?T('yourRoll'):T('pickPiece')):T('turnOf')(nameOf(S.turn));
-    st.appendChild(b);
-  } else st.textContent=fmtMsg(S.msg);
-}
-function renderOver(){
-  const ov=$('#over'); clearTimeout(overT); if(!S||S.phase!=='over'||mode===null){ov.hidden=true;return}
-  const list=$('#rankList');list.textContent='';
-  const chip=c=>{const t=document.createElement('span');t.className='tag';t.style.background=`var(--${c})`;t.style.color='#fff';t.textContent=T('col')[c];return t};
-  if(S.teams){ list.style.listStyle='none';
-    [S.winTeam,1-S.winTeam].forEach(ti=>{const li=document.createElement('li');li.className='teamblock'+(ti===S.winTeam?' won':'');li.style.display='flex';
-      const h=document.createElement('h3');h.appendChild(teamBadge(ti));
-      const ht=document.createElement('span');ht.textContent=T('teamLabel')('AB'[ti]);h.appendChild(ht);
-      if(ti===S.winTeam){const w=document.createElement('span');w.className='tag me';w.textContent=T('teamWon');h.appendChild(w)}
-      li.appendChild(h);
-      COLORS.filter(c=>TEAM_OF(c)===ti&&S.seats[c]).forEach(c=>{const m=document.createElement('div');m.className='mem';
-        const pos=S.ranks.indexOf(c);const p=document.createElement('span');p.className='pos';p.style.fontSize='15px';p.textContent=pos>=0?pos+1:'';
-        const n=document.createElement('span');n.textContent=nameOf(c);m.append(p,chip(c),n);li.appendChild(m)});
-      list.appendChild(li)});
-  } else { list.style.listStyle='';
-    S.ranks.forEach((c,k)=>{const li=document.createElement('li');const p=document.createElement('span');p.className='pos';p.textContent=k+1;
-      const n=document.createElement('span');n.textContent=nameOf(c);li.append(p,chip(c),n);list.appendChild(li)}); }
-  const canRe=mode==='local'||isHost(); $('#againBtn').hidden=!canRe; $('#overNote').hidden=canRe;
-  if(ov.hidden) overT=setTimeout(()=>{ if(S&&S.phase==='over') ov.hidden=false },1400);
-}
-const inviteLink=()=>`${location.origin}${location.pathname}?oda=${CODE}`;
-function renderLobby(){
-  $('#lobbyCode').textContent=CODE||'····';
-  $('#lobbyRole').textContent=!S?'':isHost()?T('isHost'):T('joined');
-  if(CODE){$('#inviteLink').textContent=inviteLink();
-    $('#waShare').href='https://wa.me/?text='+encodeURIComponent(T('inviteText')(inviteLink()))}
-  const list=$('#seatList');list.textContent='';
-  SEAT_ORDER.forEach((c,si)=>{const se=S&&S.seats[c];
-    if(S&&S.teams&&si%2===0){const h=document.createElement('div');h.className='seathead';h.style.gridColumn='1/-1';
-      h.appendChild(teamBadge(TEAM_OF(c)));const ht=document.createElement('span');ht.textContent=T('teamLabel')('AB'[TEAM_OF(c)]);h.appendChild(ht);list.appendChild(h)}
-    const row=document.createElement('div');row.className='seat';row.style.setProperty('--c',`var(--${c})`);
-    const t=document.createElement('span');t.className='tok';const n=document.createElement('span');n.className='nm'+(se?'':' empty');n.textContent=se?nameOf(c):T('empty');row.append(t,n);
-    if(se&&se.pid===PID&&!se.bot){const g=document.createElement('span');g.className='tag me';g.textContent=T('you');row.appendChild(g)}
-    if(se&&se.bot){const g=document.createElement('span');g.className='tag';g.textContent=T('bot');row.appendChild(g)}
-    if(isHost()){ if(!se){const b=document.createElement('button');b.className='mini';b.textContent=T('addBot');b.onclick=()=>net({t:'addbot',c});row.appendChild(b)}
-      else if(se.bot){const b=document.createElement('button');b.className='mini';b.textContent=T('remove');b.onclick=()=>net({t:'rmbot',c});row.appendChild(b)} }
-    list.appendChild(row)});
-  const n=S?COLORS.filter(c=>S.seats[c]).length:0, me=S&&COLORS.some(c=>S.seats[c]&&S.seats[c].pid===PID);
-  const tb=$('#teamBtn'),on=!!(S&&S.teams);
-  $('#teamRow').hidden=!S||(!isHost()&&!on);
-  tb.hidden=!isHost(); tb.disabled=n<4; tb.setAttribute('aria-pressed',on); tb.textContent=T('teamMode');
-  $('#teamLabel').textContent=!isHost()?(on?T('teamOn'):''):n<4?T('teamNeed4'):on?T('teamOn'):T('teamOff');
-  $('#startBtn').hidden=!isHost(); $('#startBtn').disabled=n<2;
-  $('#lobbyMsg').textContent=!S?T('connecting'):isHost()?(n<2?T('need2'):T('ready')(n)):me?T('waitHost'):T('full');
-}
-function render(){
-  updateChatBtn();
-  if(mode===null) return;
-  if(mode==='online'&&(!S||S.phase==='lobby')){show('lobby');renderLobby();$('#over').hidden=true;return}
-  show('game');
-  $('#gameRoom').textContent=mode==='online'?T('room')(CODE):'';
-  if(S.lastRoll&&S.lastRoll.id!==shownRoll&&shownGame===S.game){
-    shownRoll=S.lastRoll.id; const dd=$(`.pl[data-c="${S.lastRoll.c}"] .die`);
-    if(dd){rollingUntil=Date.now()+480;sfx.roll();if(S.lastRoll.d===6)sfx.six();dd.classList.remove('rolling');void dd.offsetWidth;dd.classList.add('rolling');dd.classList.remove('blank');
-      let n=0;const iv=setInterval(()=>{setDie(dd,1+rnd(6));if(++n>5)clearInterval(iv)},70);
-      setTimeout(()=>{dd.classList.remove('rolling');renderControls()},490)}
-  } else if(S.lastRoll) shownRoll=S.lastRoll.id;
-  renderPanels(); syncPieces(); renderControls(); renderOver(); eventSounds(); tickTimer();
-}
-/** Bir oyuna/odaya ilk girildiğinde geçmiş olaylar için ses çalmamak üzere işaretleri sıfırlar. */
-function primeSounds(){sndLast=S.last?`${S.game}:${S.last.id}:${S.last.c}:${S.last.i}`:null;sndTurn=S.stepKey;sndOver=S.phase==='over'?S.game:null;sndTo=S.to?`${S.game}:${S.to.n}`:null;seenKey=`${CODE}:${S.game}`}
-function moveSounds(){ if(!S||!S.last) return; const k=`${S.game}:${S.last.id}:${S.last.c}:${S.last.i}`; if(k===sndLast) return; sndLast=k;
-  if(S.last.cap) sfx.cap(); else if(S.last.to===56) sfx.home(); }
-function eventSounds(){
-  if(!S) return; if(seenKey!==`${CODE}:${S.game}`) primeSounds();
-  const myRoll=canControl()&&S.dice==null?S.stepKey:null;
-  if(myRoll&&myRoll!==sndTurn) setTimeout(()=>{ if(canControl()&&S.stepKey===myRoll) sfx.turn() },Math.max(350,rollingUntil-Date.now()+700));
-  sndTurn=S.stepKey;
-  if(S.to){const k=`${S.game}:${S.to.n}`; if(k!==sndTo){sndTo=k; sfx.timeout(); toast(T('timeout')(nameOf(S.to.c)))}}
-  if(S.phase==='over'&&sndOver!==S.game){sndOver=S.game; const mine=COLORS.filter(c=>S.seats[c]&&!S.seats[c].bot&&S.seats[c].pid===PID);
-    const iWon=S.teams?mine.some(c=>TEAM_OF(c)===S.winTeam):mine.includes(S.ranks[0]);
-    const noStake=mine.length===0||(mode==='local'&&!S.order.some(c=>S.seats[c]&&S.seats[c].bot));
-    setTimeout(()=>{ (noStake||iWon)?sfx.win():sfx.lose() },900)}
-}
-/** Aktif oyuncunun süre çubuğunu günceller; son 5 saniyede sıra sendeyse tik sesi çalar. */
-/** Sohbet açıkken panel başlığında sıranın kimde olduğunu gösterir. */
-function chatTurnLine(){
-  const el=$('#chatTurn'); if(!el) return;
-  const on=chatOpen&&S&&mode==='online'&&S.phase==='play';
-  el.hidden=!on; if(!on){el.textContent='';return}
-  el.textContent=''; const b=document.createElement('b');
-  b.textContent=canControl()?(S.dice==null?T('yourRoll'):T('pickPiece')):T('turnOf')(nameOf(S.turn));
-  el.appendChild(b);
-  if(S.turnEnds){const sec=Math.max(0,Math.ceil((S.turnEnds-(Date.now()+clockOff))/1000));
-    el.appendChild(document.createTextNode(' · '+T('secs')(sec)))}
-}
-function tickTimer(){
-  $$('.pl').forEach(pl=>{const tm=pl.querySelector('.tm');if(!tm)return;const c=pl.dataset.c;
-    const on=mode!==null&&S&&S.phase==='play'&&S.turn===c&&S.turnEnds;
-    tm.hidden=!on; if(!on) return;
-    const left=Math.max(0,S.turnEnds-(Date.now()+clockOff)), sec=Math.ceil(left/1000);
-    tm.querySelector('i').style.width=(left/TURN_MS*100)+'%';
-    tm.querySelector('.secs').textContent=T('secs')(sec);
-    tm.classList.toggle('warn',sec<=5);
-    if(sec<=5&&sec>0&&canControl()&&tickSec!==`${S.stepKey}:${sec}`){tickSec=`${S.stepKey}:${sec}`;sfx.tick()}
-  });
-  chatTurnLine();
-}
-setInterval(()=>{ if(S&&mode!==null&&S.phase==='play') tickTimer() },250);
-
-/* ================= actions ================= */
-function act(a){
-  if(!S) return;
-  if(mode==='local'){const s=clone(S);const se=s.seats[s.turn];if(!se||se.bot)return;if(applyAct(s,a,se.pid))commitLocal(s);return}
-  if(waiting) return; waiting=true; net({t:'act',a}); renderControls();
-  setTimeout(()=>{if(waiting){waiting=false;renderControls()}},2500);
-}
-function commitLocal(s){armTimer(s,Date.now());clockOff=0;S=s;render();scheduleLocalBot()}
-function scheduleLocalBot(){
-  clearTimeout(botT); if(mode!=='local'||!S||S.phase!=='play') return;
-  const se=S.seats[S.turn]; if(!se) return; const key=S.stepKey, human=!se.bot;
-  const wait=human?Math.max(0,S.turnEnds-Date.now()):(S.dice==null?1000:800);
-  botT=setTimeout(()=>{ if(mode!=='local'||!S||S.phase!=='play'||S.stepKey!==key) return; const s=clone(S); human?timeoutStep(s):botStep(s); commitLocal(s) }, wait);
-}
-function startLocal(n,bots,teams){
-  disconnect(); mode='local'; CODE=null; shown=null;
-  const s=newState(); SEAT_ORDER.slice(0,n).forEach((c,k)=>{ s.seats[c]= bots&&k>0 ? {pid:'bot-'+c,nick:'',bot:true} : {pid:PID,nick:bots?nick:'',bot:false} });
-  s.teams=!!teams&&n===4; startGame(s); commitLocal(s);
-}
-
-/* ================= online (WebSocket) ================= */
-function net(m){ if(ws&&ws.readyState===1) ws.send(JSON.stringify(m)) }
-function connect(){
-  if(ws) return;
-  ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host);
-  ws.onopen=()=>{ retry=0; $('#netbar').hidden=true; net({t:'hello',pid:PID});
-    if(want) net(want.create?{t:'create',nick}:{t:'join',code:want.code,nick}) };
-  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(_){return}
-    if(m.t==='joined'){CODE=m.code;want={code:m.code};setUrl(m.code);render()}
-    else if(m.t==='state'){ if(mode!=='online') return; if(typeof m.now==='number') clockOff=m.now-Date.now(); S=m.st; waiting=false; render() }
-    else if(m.t==='chat'){ onChat(m.item) }
-    else if(m.t==='chatlog'){ if(Array.isArray(m.items)){chatItems=m.items.slice(-60);renderChat();updateChatBtn()} }
-    else if(m.t==='error'){ toast((T('err')[m.code])||T('err').conn); if(m.code==='no_room') toMenu() }
-  };
-  ws.onclose=()=>{ ws=null; waiting=false; if(mode==='online'){ $('#netbar').hidden=false; setTimeout(connect,Math.min(5000,800*(++retry))) } };
-}
-function disconnect(){ clearChat(); want=null; if(ws){ try{net({t:'leave'});ws.onclose=null;ws.close()}catch(e){} ws=null } $('#netbar').hidden=true; clearTimeout(botT); setUrl(null) }
-function needNick(){ if(!nick){toast(T('nameFirst'));$('#nick').focus();return true} return false }
-function hostRoom(){ if(needNick())return; disconnect(); mode='online'; S=null; shown=null; CODE=null; want={create:true}; render(); connect() }
-function joinRoom(code){
-  code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if(code.length<4){toast(T('code4'));return}
-  if(needNick())return;
-  disconnect(); mode='online'; S=null; shown=null; CODE=code; want={code}; render(); connect();
-}
-function toMenu(){disconnect();mode=null;S=null;shown=null;CODE=null;$('#over').hidden=true;show('menu')}
-function setUrl(code){try{const u=code?`?oda=${code}`:location.pathname;history.replaceState(null,'',u)}catch(e){}}
-
-/* ================= UI wiring ================= */
-let toastT;function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2800)}
-$('#nick').value=nick;
-$('#nick').addEventListener('input',e=>{nick=cleanNick(e.target.value);store('ludo-nick',nick)});
-function seg(id,onChange){let n=2;$$(`#${id} button`).forEach(b=>b.onclick=()=>{n=+b.dataset.n;$$(`#${id} button`).forEach(x=>x.setAttribute('aria-pressed',x===b));onChange&&onChange(n)});return()=>n}
-/** 4 oyuncu seçiliyken takım anahtarını gösterir. */
-function localTeams(segId,btnId){const b=$(btnId);
-  const upd=n=>{b.hidden=n!==4; if(n!==4)b.setAttribute('aria-pressed','false')};
-  const get=seg(segId,upd); b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true'); upd(2);
-  return{n:get,teams:()=>b.getAttribute('aria-pressed')==='true'}}
-const botSel=localTeams('botN','#botTeams'),hotSel=localTeams('hotN','#hotTeams');
-const botN=botSel.n,hotN=hotSel.n;
-$('#botBtn').onclick=()=>startLocal(botN(),true,botSel.teams());
-$('#hotBtn').onclick=()=>startLocal(hotN(),false,hotSel.teams());
-$('#teamBtn').onclick=()=>net({t:'teams',on:!(S&&S.teams)});
-$$('.chatbtn').forEach(b=>b.onclick=()=>setChat(!chatOpen));
-$('#chatClose').onclick=()=>setChat(false);
-$('#chatForm').addEventListener('submit',e=>{e.preventDefault();sendChat($('#chatIn').value)});
-$('#hostBtn').onclick=hostRoom;
-$('#joinBtn').onclick=()=>joinRoom($('#codeIn').value);
-$('#codeIn').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom(e.target.value)});
-$('#nick').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('#joinHint').hidden)joinRoom($('#hintCode').textContent)});
-$('#hintJoin').onclick=()=>joinRoom($('#hintCode').textContent);
-$('#lobbyBack').onclick=toMenu;$('#gameBack').onclick=toMenu;$('#overMenu').onclick=toMenu;
-$('#startBtn').onclick=()=>net({t:'start'});
-$('#againBtn').onclick=()=>{$('#over').hidden=true; if(mode==='local'){const s=clone(S);startGame(s);commitLocal(s)} else net({t:'again'})};
-$('#copyInvite').onclick=async()=>{
-  const text=T('inviteText')(inviteLink());
-  try{await navigator.clipboard.writeText(text);toast(T('copied'))}
-  catch(e){toast(inviteLink())}
-};
-// davet linkiyle gelindiyse
-(function(){const c=(new URLSearchParams(location.search).get('oda')||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if(c.length>=4){$('#hintCode').textContent=c;$('#codeIn').value=c;$('#joinHint').hidden=false;
-    // adı daha önce kaydedildiyse doğrudan odaya gir
-    if(nick) joinRoom(c); else $('#nick').focus()}})();
-$$('.sndbtn').forEach(b=>b.onclick=()=>{SND.on=!SND.on;store('ludo-sound',SND.on?'on':'off');if(SND.on){ac();sfx.turn()}applyLang()});
-$$('.langbtn').forEach(b=>b.onclick=()=>{LANG=LANG==='tr'?'en':'tr';store('ludo-lang',LANG);applyLang()});
 applyLang();
-if(mode===null) show('menu');
 </script>
-
 </body>
 </html>

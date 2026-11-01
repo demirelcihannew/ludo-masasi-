@@ -123,6 +123,12 @@
   /** Bot (ya da çevrimdışı oyuncu yerine) bir adım oynar. */
   function botStep(s) { if (s.dice == null) roll(s); else doMove(s, botPick(s)); }
 
-  const E = { COLORS, SEAT_ORDER, NAME, TRACK, OFF, HOME, SAFE, rnd, nk, gIdx, newState, startGame, legal, roll, doMove, applyAct, botPick, botStep, TURN_MS, stepKey, armTimer, timeoutStep, TEAM, TEAM_OF, MATE, isMate, teamsOk };
+  /* Sunucunun iki oyunu aynı şekilde yönetebilmesi için ortak arayüz. */
+  const deadline = s => (s.phase === 'play' ? s.turnEnds || null : null);
+  const botDelay = s => (s.dice == null ? 1100 : 900);
+  const view = s => s;            // Ludo'da gizli bilgi yok
+  const perPlayer = false;
+
+  const E = { deadline, botDelay, view, perPlayer, COLORS, SEAT_ORDER, NAME, TRACK, OFF, HOME, SAFE, rnd, nk, gIdx, newState, startGame, legal, roll, doMove, applyAct, botPick, botStep, TURN_MS, stepKey, armTimer, timeoutStep, TEAM, TEAM_OF, MATE, isMate, teamsOk };
   if (typeof module !== 'undefined' && module.exports) module.exports = E; else window.LudoEngine = E;
 })();
